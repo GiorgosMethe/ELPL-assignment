@@ -1,11 +1,6 @@
 #(TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
-import parser
+import tree_parser
 
-f = open('trainingSet',"r")
+f = open('trainingSet.txt',"r")
 text = f.read()
-parser.parseDocument(text,0,-1)
-
-
-
-
-
+tree_parser.parseDocument(text,0,-1)
