@@ -1,15 +1,16 @@
 # parser module
 
-anArray = []
+tempArray = []
+prodRules = {}
 
 class ParsedRules(object):
     def __init__(self, rule, lvl):
 		self.rule = rule
 		self.lvl = lvl
 
-def printRules():
-    for item in anArray:
-        print item.rule, item.lvl
+def createRules():
+	for j in range(0,len(tempArray)):
+		print tempArray[j].rule, tempArray[j].lvl
 
 def parseDocument(inputText,start,lvl):
 	openP = 0
@@ -36,8 +37,22 @@ def parseDocument(inputText,start,lvl):
 			if (inputText[i+1] == "\n"):
 				lvl = -1
 				parseDocument(inputText, i+2, lvl)
+				createRules()
 			break
 	
 def fixRules(inputString,level):
-	anArray.append(ParsedRules(inputString, level))
-	printRules()
+	#print inputString	
+	fixed = ""
+	lvlOff = 0
+	for i in range(len(inputString)):
+		if(inputString[i] == " "):
+			if(fixed != ""):
+				tempArray.append(ParsedRules(fixed, level + lvlOff))
+				lvlOff += 1
+			fixed = ""
+		else:
+			fixed += inputString[i]
+			if(i == len(inputString)-1):
+				tempArray.append(ParsedRules(fixed, level + lvlOff))
+				lvlOff += 1
+				fixed = ""
