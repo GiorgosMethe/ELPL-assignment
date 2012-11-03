@@ -53,6 +53,19 @@ def fixProbs():
 			f = float(value)/ruleCount[rule]
 			ruleDict[rule][key] = f
 
+def writeFile():
+	f = open('output.txt', 'w')
+	for rule in rules:
+		for key, value in ruleDict[rule].iteritems():
+			f.write(rule)
+			f.write(' --> ')
+			f.write(key)
+			f.write(',        prob= ')
+			f.write(str(value))
+			f.write('\n')
+	f.close()
+
+
 def printRules():
 	pprint(ruleDict)
 
