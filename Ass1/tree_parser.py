@@ -1,4 +1,5 @@
 # parser module
+import sys
 from pprint import pprint
 tempArray = []
 
@@ -15,6 +16,9 @@ class Rule(object):
     def __init__(self, leftSide, rightSide):
 		self.leftSide = leftSide
 		self.rightSide = rightSide
+
+def update_progress(progress):
+    print '\r[{0}] {1}%'.format('#'*(progress/10), progress),
 
 def createRules():
 	for i in range(len(tempArray)-1):
@@ -54,6 +58,7 @@ def fixProbs():
 			ruleDict[rule][key] = f
 
 def writeFile():
+	print "Printing output...(output.txt)",
 	f = open('output.txt', 'w')
 	for rule in rules:
 		for key, value in ruleDict[rule].iteritems():
@@ -64,6 +69,7 @@ def writeFile():
 			f.write(str(value))
 			f.write('\n')
 	f.close()
+	print "completed successfully"
 
 
 def printRules():
@@ -73,8 +79,17 @@ def parseDocument(inputText,start,lvl):
 	openP = 0
 	closeP = 0
 	a = ""
+	pc = -1
+	print "Parsing document progress:"
 	for i in range(start, len(inputText)):
-		if (inputText[i] == ")"):
+		progress = float(i+1)/len(inputText) * 100
+		update_progress(int(progress))
+		if (inputText[i] == "\n" ):
+			createRules()
+			del tempArray[:]
+			i += 1
+			lvl = -1
+		elif (inputText[i] == ")"):
 			if(a != "" and a != " "):
 				fixRules(a,lvl)
 				a = ""
@@ -87,18 +102,9 @@ def parseDocument(inputText,start,lvl):
 				a = ""
 			openP += 1
 			lvl += 1
-			parseDocument(inputText, i+1, lvl)
 		else:
 			a += inputText[i]
-		if (openP == closeP):
-			if (i+1 > len(inputText)-1):
-				createRules()
-			else:
-				if inputText[i+1] == "\n":
-					lvl = -1
-					parseDocument(inputText, i+2, lvl)
-					tempArray[:] = []
-				break
+	print "Parsing document completed successfully"
 	
 def fixRules(inputString,level):
 	fixed = ""
