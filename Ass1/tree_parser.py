@@ -3,6 +3,8 @@ from pprint import pprint
 tempArray = []
 
 ruleDict = dict()
+ruleCount = dict()
+rules = []
 
 class ParsedRules(object):
     def __init__(self, rule, lvl):
@@ -29,10 +31,27 @@ def createRules():
 				break
 
 def saveRule(newRule):
-	if newRule.leftSide+" "+newRule.rightSide in ruleDict:
-		ruleDict[newRule.leftSide+" "+newRule.rightSide] += 1
+
+	if newRule.leftSide in ruleCount:
+		ruleCount[newRule.leftSide] += 1
 	else:
-		ruleDict[newRule.leftSide+" "+newRule.rightSide] = 1
+		ruleCount[newRule.leftSide] = 1
+		rules.append(newRule.leftSide)
+
+	if newRule.leftSide in ruleDict:
+			if newRule.rightSide in ruleDict[newRule.leftSide]:
+				ruleDict[newRule.leftSide][newRule.rightSide] += 1
+			else:
+				ruleDict[newRule.leftSide][newRule.rightSide] = 1
+	else:
+		ruleDict[newRule.leftSide] = dict()
+		ruleDict[newRule.leftSide][newRule.rightSide] = 1
+
+def fixProbs():
+	for rule in rules:
+		for key, value in ruleDict[rule].iteritems():
+			f = float(value)/ruleCount[rule]
+			ruleDict[rule][key] = f
 
 def printRules():
 	pprint(ruleDict)
