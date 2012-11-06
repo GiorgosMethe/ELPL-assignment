@@ -1,4 +1,5 @@
 import tree_parser
+import cky
 
 f = open('trainingSet.txt',"r")
 text = f.read()
