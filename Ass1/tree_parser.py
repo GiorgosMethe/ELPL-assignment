@@ -60,14 +60,17 @@ def fixProbs():
 def writeFile():
 	print "Printing output...(output.txt)",
 	f = open('output.txt', 'w')
+	i = 0
 	for rule in rules:
 		for key, value in ruleDict[rule].iteritems():
+			f.write('{num:{fill}{width}} '.format(num=i, fill='0', width=5))
 			f.write(rule)
-			f.write(' --> ')
+			f.write(' ')
 			f.write(key)
-			f.write(',        prob= ')
+			f.write(' ')
 			f.write(str(value))
 			f.write('\n')
+			i += 1
 	f.close()
 	print "completed successfully"
 
