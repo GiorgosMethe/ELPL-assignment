@@ -23,11 +23,20 @@ def readPCFG():
 
 def readSentences():
 	for line in open("testSentences.txt", "r"):
-		sentences.append(line.split(" "))
+		items = line.split(" ")
+		temp = []
+		for item in items:
+			if item == '':
+				break
+			temp.append(item)
+		sentences.append(temp)
 
 def itarateSentences():
+	i = 0
 	for s in sentences:
+		print "Sentence in line ", i, " is: ",
 		ckyAlgorithm(s)
+		i += 1
 
 def checkAndReturnItems(a,b):
 	retunTable = [];
@@ -46,14 +55,14 @@ def checkAndReturnItems(a,b):
 
 def ckyAlgorithm(s):
 	CKYtable = initialize_threedlist(len(s))
-	for i in range(1,len(s)):
-		for key, value in rules[s[i]].iteritems():
-			CKYtable[i][i].append(key)
+	for i in range(len(s)):
+		if s[i] in rules:
+			for key, value in rules[s[i]].iteritems():
+				CKYtable[i][i].append(key)
 	n = len(s)
 	for i in range(1, n):
-		for j in range(0,n-i+1):
-  			for k in range(0,i-1):
-  				print j,i
+		for j in range(n-i+1):
+  			for k in range(i-1):
   				for item in checkAndReturnItems(CKYtable[j+k][i-k], CKYtable[j][k]):
 						if item in rules:
 							for key, value in rules[item].iteritems():
@@ -64,9 +73,6 @@ def ckyAlgorithm(s):
 		if(len(CKYtable[0][i]) != 0):
 			f = True
 	print f
-
-	printCKYtable(CKYtable);
-
 
 def printCKYtable(CKYtable):
 	pass
