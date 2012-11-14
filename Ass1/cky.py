@@ -29,6 +29,20 @@ def itarateSentences():
 	for s in sentences:
 		ckyAlgorithm(s)
 
+def checkAndReturnItems(a,b):
+	retunTable = [];
+	if(len(a)!=0 and len(b)!=0):
+		for item1 in a:
+			for item2 in b:
+				retunTable.append(item1+" "+item2)
+	elif len(a)==0:
+		for item2 in b:
+				retunTable.append(item2)
+	else:
+		for item1 in a:
+				retunTable.append(item1)
+	return retunTable
+
 
 def ckyAlgorithm(s):
 	CKYtable = initialize_threedlist(len(s))
@@ -40,15 +54,10 @@ def ckyAlgorithm(s):
 		for j in range(0,n-i+1):
   			for k in range(0,i-1):
   				print j,i
-  				for itemA in CKYtable[j+k][i-k]:
-  					for itemB in CKYtable[j][k]:
-  						st = itemA +" "+ itemB
-  						st1 = itemB +" "+itemA
-  						if st1 in rules:
-							for key, value in rules[st1].iteritems():
-								CKYtable[j][i].append(key)
-  						if st in rules:
-							for key, value in rules[st].iteritems():
+  				for item in checkAndReturnItems(CKYtable[j+k][i-k], CKYtable[j][k]):
+						if item in rules:
+							for key, value in rules[item].iteritems():
+								CKYtable[j][i] = []
 								CKYtable[j][i].append(key)
 	f = False
 	for i in range(len(s)):
@@ -56,7 +65,7 @@ def ckyAlgorithm(s):
 			f = True
 	print f
 
-	# printCKYtable(CKYtable);
+	printCKYtable(CKYtable);
 
 
 def printCKYtable(CKYtable):
