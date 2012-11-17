@@ -1,7 +1,14 @@
 import sys
+from collections import defaultdict
 
-rules = dict()
+rulesRL = defaultdict(set)
+rulesLR = defaultdict(set)
 sentences = []
+
+class item():
+    def __init__(self, node, prob):
+        self.node = node
+        self.prob = prob
 
 def initialize_threedlist(value):
     list=[]
@@ -15,11 +22,15 @@ def readPCFG():
 	for line in open("output.txt", "r"):
 		values = line.split(" ")
 		if len(values) == 5:
-			rules[values[2]+" "+values[3]] = dict()
-			rules[values[2]+" "+values[3]][values[1]] = values[4]
+			rulesRL[(values[2],values[3])] = dict()
+			rulesRL[(values[2],values[3])][values[1]] = values[4]
+			rulesLR[values[1]] = dict()
+			rulesLR[values[1]][(values[2],values[3])] = values[4]
 		else:
-			rules[values[2]] = dict()
-			rules[values[2]][values[1]] = values[3]
+			rulesRL[values[2]] = dict()
+			rulesRL[values[2]][values[1]] = values[3]
+			rulesLR[values[1]] = dict()
+			rulesLR[values[1]][values[2]] = values[3]
 
 def readSentences():
 	for line in open("testSentences.txt", "r"):
@@ -35,47 +46,30 @@ def itarateSentences():
 	i = 0
 	for s in sentences:
 		print "Sentence in line ", i, " is: ",
-		ckyAlgorithm(s)
+		ChartInitialization(s)
 		i += 1
 
-def checkAndReturnItems(a,b):
-	retunTable = [];
-	if(len(a)!=0 and len(b)!=0):
-		for item1 in a:
-			for item2 in b:
-				retunTable.append(item1+" "+item2)
-	elif len(a)==0:
-		for item2 in b:
-				retunTable.append(item2)
-	else:
-		for item1 in a:
-				retunTable.append(item1)
-	return retunTable
-
-
-def ckyAlgorithm(s):
-	CKYtable = initialize_threedlist(len(s))
+def ChartInitialization(s):
+	CKYtable = initialize_threedlist(len(s)+1)
 	for i in range(len(s)):
-		if s[i] in rules:
-			for key, value in rules[s[i]].iteritems():
-				CKYtable[i][i].append(key)
-	n = len(s)
-	for i in range(1, n):
-		for j in range(n-i+1):
-  			for k in range(i-1):
-  				for item in checkAndReturnItems(CKYtable[j+k][i-k], CKYtable[j][k]):
-						if item in rules:
-							for key, value in rules[item].iteritems():
-								CKYtable[j][i] = []
-								CKYtable[j][i].append(key)
-	f = False
-	for i in range(len(s)):
-		if(len(CKYtable[0][i]) != 0):
-			f = True
-	print f
+		for key, value in rulesRL[s[i]].iteritems():
+			CKYtable[i][i+1].append(item(key,value))
+	n = len(s)+1
+	for span in range(2,n):
+		for begin in range(n-span):
+			end = begin + span
+			for split in range(begin+1,end):
+				A = CKYtable[begin][split]
+				B = CKYtable[split][end]
+				for x in A:
+					for y in B:
+						if (x.node,y.node) in rulesRL:
+							for key, value in rulesRL[(x.node,y.node)].iteritems():	
+								CKYtable[begin][end].append(item(key,value))
+	printCKYtable(CKYtable)
 
 def printCKYtable(CKYtable):
 	pass
 	for a in CKYtable:
 		print a
-		
+
