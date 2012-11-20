@@ -5,19 +5,6 @@ rulesRL = defaultdict(set)
 rulesLR = defaultdict(set)
 sentences = []
 
-class item():
-    def __init__(self, node, prob):
-        self.node = node
-        self.prob = prob
-
-def initialize_threedlist(value):
-    list=[]
-    for row in range(value):
-        list.append([]*value)
-        for col in range(value):
-        	list[row].append([])
-    return list
-
 def readPCFG():
 	for line in open("output.txt", "r"):
 		values = line.split(" ")
@@ -49,27 +36,57 @@ def itarateSentences():
 		ChartInitialization(s)
 		i += 1
 
+def node_exist(l,ref_node):
+	for nodes in l:
+		if nodes == ref_node:
+			return True
+	return False
+
 def ChartInitialization(s):
-	CKYtable = initialize_threedlist(len(s)+1)
+	chart = defaultdict(set)
+	score = defaultdict(set)
 	for i in range(len(s)):
-		for key, value in rulesRL[s[i]].iteritems():
-			CKYtable[i][i+1].append(item(key,value))
+		chart[i,i+1] = []
+		if s[i] in rulesRL:
+			for key, value in rulesRL[s[i]].iteritems():
+				chart[i,i+1].append(key)
+		for item in chart[i,i+1]:
+			if item in rulesRL:
+				for key, value in rulesRL[item].iteritems():
+					if(not node_exist(chart[i,i+1],key)):
+						chart[i,i+1].append(key)
 	n = len(s)+1
 	for span in range(2,n):
 		for begin in range(n-span):
 			end = begin + span
+			chart[begin,end] = []
 			for split in range(begin+1,end):
-				A = CKYtable[begin][split]
-				B = CKYtable[split][end]
+				A = chart[begin,split]
+				B = chart[split,end]
+				for x in A:
+					if x in rulesRL:
+							for key, value in rulesRL[x].iteritems():
+								if(not node_exist(chart[begin,end],key)):
+									chart[begin,end].append(key)
+				for x in B:
+					if x in rulesRL:
+							for key, value in rulesRL[x].iteritems():
+								if(not node_exist(chart[begin,end],key)):
+									chart[begin,end].append(key)
 				for x in A:
 					for y in B:
-						if (x.node,y.node) in rulesRL:
-							for key, value in rulesRL[(x.node,y.node)].iteritems():	
-								CKYtable[begin][end].append(item(key,value))
-	printCKYtable(CKYtable)
+						if (x,y) in rulesRL:
+							for key, value in rulesRL[x,y].iteritems():
+								if(not node_exist(chart[begin,end],key)):
+									chart[begin,end].append(key)
+	printTable(chart,len(s)+1)
 
-def printCKYtable(CKYtable):
-	pass
-	for a in CKYtable:
-		print a
 
+def printTable(table,n):
+	for i in range(n):
+		print ""
+		for j in range(n):
+			for item in table[i,j]:
+				print item,
+			print "\t",
+	
