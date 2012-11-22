@@ -1,16 +1,18 @@
 import sys
 from collections import defaultdict
 
+""" Dictionary to hold the rules from the extracted pcfg
+	Binary rules are held like:
+	<<rulesRL[right_side][left_side] = prob>>
+"""
 rulesRL = defaultdict(set)
-rulesLR = defaultdict(set)
 sentences = []
 
 class chart_item():
-    def __init__(self, node, child, prob, split):
-        self.node = node
-        self.child = child
+    def __init__(self, prob, split, unary):
         self.prob = prob
         self.split = split
+        self.unary = unary
 
 
 def readPCFG():
@@ -42,55 +44,63 @@ def itarateSentences():
 		ChartInitialization(s)
 		i += 1
 
-def node_exist(l,ref):
-	for nodes in l:
-		if nodes.node == ref.node and nodes.child == ref.child:
-			return True
-	return False
-
 def check_unaries(chart):
 	added = True
 	while added == True:
 		added = False
-		for item in chart:
-			if item.node in rulesRL:
-				for key, value in rulesRL[item.node].iteritems():
-					temp = chart_item(key, item.node, value, 0)
-					if not node_exist(chart,temp):
-						added = True
-						chart.append(temp)
-
+		tempChart = chart.copy()
+		for key, value in tempChart.iteritems():
+			if key in rulesRL:
+				for key1,value1 in rulesRL[key].iteritems():
+					if type(chart[key1]) != type({}):
+						chart[key1] = {}
+						chart[key1][key] = chart_item(value, 0, True)
+					else:
+						if not key in chart[key1]:
+							chart[key1][key] = chart_item(value, 0, True)
+		tempChart = chart.copy()
 
 def ChartInitialization(s):
-	chart = defaultdict(set)
+	chart = {}
 	for i in range(len(s)):
-		chart[i,i+1] = []
+		chart[i,i+1] = defaultdict(set)
 		if s[i] in rulesRL:
 			for key, value in rulesRL[s[i]].iteritems():
-				chart[i,i+1].append(chart_item(key, s[i], value, 0))
+				if type(chart[i,i+1][key]) != type({}):
+					chart[i,i+1][key] = {}
+					chart[i,i+1][key][s[i]] = chart_item(value, 0, False)
+				else:
+					if not s[i] in chart[i,i+1][key]:
+						chart[i,i+1][key][s[i]] = chart_item(value, 0, False)
 		check_unaries(chart[i,i+1])
 		
 	n = len(s)+1
 	for span in range(2,n):
 		for begin in range(n-span):
 			end = begin + span
-			chart[begin,end] = []
+			chart[begin,end] = defaultdict(set)
 			for split in range(begin+1,end):
-				A = chart[begin,split]
-				B = chart[split,end]
-				for x in A:
-					for y in B:
-						if (x.node,y.node) in rulesRL:
-							for key, value in rulesRL[x.node,y.node].iteritems():
-								temp = chart_item(key,(x.node,y.node), value, split)
-								if not node_exist(chart[begin,end],temp):
-				 					chart[begin,end].append(temp)
+				for x in chart[begin,split]:
+					for y in chart[split,end]:
+						if (x,y) in rulesRL:
+							for key, value in rulesRL[(x,y)].iteritems():
+								if type(chart[begin,end][key]) != type({}):
+									chart[begin,end][key] = {}
+									chart[begin,end][key][(x,y)] = chart_item(value, split, False)
+								else:
+									if not s[i] in chart[begin,end][key]:
+										chart[begin,end][key][(x,y)] = chart_item(value, split, False)
 			check_unaries(chart[begin,end])
-	printTable(chart,len(s)+1)
+	print_top_productions(chart,n)
 
-def printTable(table,n):
 
-	for item in table[0,n-1]:
-		if item.node == "TOP":
-			print item.node, item.child
+def print_top_productions(chart,n):
+	for i in range(n):
+		for j in range(n):
+			if (i,j) in chart:
+				if i == 0 and j == 7:
+					for key,value in chart[i,j].iteritems():
+						if key == "TOP":
+							for key1,value1 in chart[i,j][key].iteritems():
+								print key,key1
 	
