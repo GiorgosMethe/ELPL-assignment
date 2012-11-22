@@ -1,0 +1,110 @@
+README for Treebank Parser, CYK
+=====================================================
+
+Elements of Language Processing and Learning 2012, University of Amsterdam.
+Project One, steps 1 & 2
+Georgios Methenitis & Marios Tzakris
+
+Code written to run under Python 2.7.3 with the _argparse_ module.
+
+Executable: run.py
+=====================================================
+To print the instructions for using this executable run:
+$ python run.py --help.
+
+usage: run.py [-h] [-e TREEBANK TREEBANK] [-s S_GRAMMAR_FILE]
+              [-ps PS_GRAMMAR_FILE PS_GRAMMAR_FILE]
+              [-pf PF_GRAMMAR_FILE PF_GRAMMAR_FILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -e TREEBANK TREEBANK, --treebank TREEBANK TREEBANK
+                        Generate a grammar from the passed treebank.
+  -s S_GRAMMAR_FILE, --s_grammar_file S_GRAMMAR_FILE
+                        Show grammar.
+  -ps PS_GRAMMAR_FILE PS_GRAMMAR_FILE, --ps_grammar_file PS_GRAMMAR_FILE PS_GRAMMAR_FILE
+                        CYK parser, takes a sentence as argument.
+  -pf PF_GRAMMAR_FILE PF_GRAMMAR_FILE, --pf_grammar_file PF_GRAMMAR_FILE PF_GRAMMAR_FILE
+                        CYK parser, takes a file with one or more sentences.
+
+Commands:
+=====================================================
+A grammar can be generated with the command:
+$ python run.py -e <treebank> <output>
+example: $ python run.py -e trainingSet.txt output.txt
+=====================================================
+A grammar can be shown to console with the command:
+$ python run.py -s <pcfg_file_name>
+example: $ python run.py -s output.txt
+=====================================================
+CYK parser can parse an input sentence from console with the command:
+$ python run.py -ps <pcfg_file_name> <sentence>
+example: $ python run.py -ps output.txt "I feel good . "
+=====================================================
+CYK parser can parse sentences existing in a text file with the command:
+$ python run.py -pf <pcfg_file_name> <sentences_file>
+example: $ python run.py -pf output.txt testSentences.txt
+=====================================================
+
+
+
+Module: tree_parser.py
+=====================================================
+This module is responisble for parsing the treebank file
+and store the generated rules from it.
+
+example output:
+<id> <left_side> <right_side> <probability>
+00000 TOP FRAG%%%%%NP 0.000225954658432 
+00001 TOP SBAR 0.000577439682659 
+00002 TOP SINV 0.0447390223695 
+00003 TOP ADJP 0.000150636438955
+
+functions:
+=====================================================
+createRules():
+
+saveRule(newRule):
+
+fixProbs():
+
+writeFile(file_name): writes the rules in output text fle in 
+the above format
+
+printRules(): Print the rules
+
+parseDocument(inputText,start,lvl):Takes as input the treebank
+and parses the rules inside it.
+
+fixRules(inputString,level):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
