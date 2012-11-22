@@ -2,21 +2,30 @@ import sys
 from collections import defaultdict
 
 """ Dictionary to hold the rules from the extracted pcfg
-	Binary rules are held like:
-	<<rulesRL[right_side][left_side] = prob>>
+Binary rules are held like:
+<<rulesRL[right_side][left_side] = prob>>
 """
 rulesRL = defaultdict(set)
 sentences = []
+start_node = "TOP"
+unknown_node = "@UNKNOWN"
+numeral_node = "@NUMBER"
 
+"""Holds information about each rule in every chart_item
+position
+"""
 class chart_item():
     def __init__(self, prob, split, unary):
-        self.prob = prob
+    	self.prob = prob
         self.split = split
         self.unary = unary
 
-
-def readPCFG():
-	for line in open("output.txt", "r"):
+def read_pcfg(file_name):
+	"""Reads the grammar rules from the output of the pcfg
+	parser.
+	Output: writes the rulesRL dictionary
+    """
+	for line in open(file_name, "r"):
 		values = line.split(" ")
 		if len(values) == 6:
 			if type(rulesRL[(values[2],values[3])])!=type({}):
@@ -27,8 +36,11 @@ def readPCFG():
 				rulesRL[values[2]] = dict()
 			rulesRL[values[2]][values[1]] = values[3]
 
-def readSentences():
-	for line in open("testSentences.txt", "r"):
+def read_sentences(file_name):
+	"""Reads all sentences from the given txt file.
+	Output: writes sentences list
+    """
+	for line in open(file_name, "r"):
 		items = line.split(" ")
 		temp = []
 		for item in items:
@@ -37,14 +49,32 @@ def readSentences():
 			temp.append(item)
 		sentences.append(temp)
 
-def itarateSentences():
+def read_sentences_input(sentence):
+	"""Reads sentence from terminal
+    """
+	items = sentence.split(" ")
+	temp = []
+	for item in items:
+		if item == '':
+			break
+		temp.append(item)
+	sentences.append(temp)
+
+def iterate_sentences():
+	"""iterates over all saved sentences and runs the cky parser
+	for each one of them
+    """
 	i = 0
 	for s in sentences:
 		print "Sentence in line ", i, " is: "
-		ChartInitialization(s)
+		cky_parsing(s)
 		i += 1
 
 def check_unaries(chart):
+	"""iterates over all nodes inot the specified chart position
+	and looks for unaries
+	Output: adds the unary rules to the specified chart position
+    """
 	added = True
 	while added == True:
 		added = False
@@ -60,7 +90,10 @@ def check_unaries(chart):
 							chart[key1][key] = chart_item(value, 0, True)
 		tempChart = chart.copy()
 
-def ChartInitialization(s):
+def cky_parsing(s):
+	"""cky parser from stanford slides
+	Output: the complete parse-forest
+    """
 	chart = {}
 	for i in range(len(s)):
 		chart[i,i+1] = defaultdict(set)
@@ -72,6 +105,9 @@ def ChartInitialization(s):
 				else:
 					if not s[i] in chart[i,i+1][key]:
 						chart[i,i+1][key][s[i]] = chart_item(value, 0, False)
+		else:
+			chart[i,i+1][unknown_rule] = {}
+			chart[i,i+1][unknown_rule][s[i]] = chart_item(value, 0, False)
 		check_unaries(chart[i,i+1])
 		
 	n = len(s)+1
@@ -95,12 +131,15 @@ def ChartInitialization(s):
 
 
 def print_top_productions(chart,n):
+	"""prints the top production in the upper right 
+	corner of the chart table
+    """
 	for i in range(n):
 		for j in range(n):
 			if (i,j) in chart:
-				if i == 0 and j == 7:
+				if i == 0 and j == n-2:
 					for key,value in chart[i,j].iteritems():
-						if key == "TOP":
+						if key == start_node:
 							for key1,value1 in chart[i,j][key].iteritems():
 								print key,key1
 	
