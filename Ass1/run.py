@@ -2,8 +2,6 @@ import tree_parser
 import cky
 import sys
 import argparse
-import pickle
-
 
 help = {
 	'e':	'Generate a grammar from the passed treebank.',
@@ -50,6 +48,6 @@ if args.s_grammar_file:
 if args.treebank:		
 	f = open(args.treebank[0],"r")
 	text = f.read()
-	tree_parser.parseDocument(text,0,-1)
-	tree_parser.fixProbs()
-	tree_parser.writeFile(args.treebank[1])
+	tree_parser.parse_document(text,0,-1)
+	tree_parser.fix_probs()
+	tree_parser.write_file(args.treebank[1])

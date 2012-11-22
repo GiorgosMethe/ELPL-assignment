@@ -62,21 +62,32 @@ example output:
 
 functions:
 =====================================================
-createRules():
+createRules(): 
+Takes the nodes and the level of each of them
+for each sentence and then with an iterative rule produces
+the rules.
 
-saveRule(newRule):
+saveRule(newRule): 
+Saves rules into a dictionary each left
+hand side node in rules holds a counter
 
-fixProbs():
+fixProbs(): 
+Generates the probability of each rule according 
+the counter in the left side nodes and the number of 
+appearances of its right side productions.
 
-writeFile(file_name): writes the rules in output text fle in 
+write_file(file_name): 
+Writes the rules in output text fle in 
 the above format
 
-printRules(): Print the rules
+parse_document(inputText,start,lvl):
+Takes as input the treebank
+and parses the rules inside it. Assigns a level in each node
+according to the parenthesis status.
 
-parseDocument(inputText,start,lvl):Takes as input the treebank
-and parses the rules inside it.
-
-fixRules(inputString,level):
+fix_rules(inputString,level): 
+Fixed the level of each rule due 
+to the fact that some rules are located into the same parenthesis.
 
 
 

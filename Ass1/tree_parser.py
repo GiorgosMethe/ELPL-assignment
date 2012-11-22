@@ -1,13 +1,13 @@
 # parser module
 import sys
 from pprint import pprint
-tempArray = []
+temp_array = []
 
-ruleDict = dict()
-ruleCount = dict()
+rule_dict = dict()
+rule_count = dict()
 rules = []
 
-class ParsedRules(object):
+class parsed_rules(object):
     def __init__(self, rule, lvl):
 		self.rule = rule
 		self.lvl = lvl
@@ -20,49 +20,48 @@ class Rule(object):
 def update_progress(progress):
     print '\r[{0}] {1}%'.format('#'*(progress/10), progress),
 
-def createRules():
-	for i in range(len(tempArray)-1):
+def create_rules():
+	for i in range(len(temp_array)-1):
 		rightSide = ""
-		for j in range(i+1,len(tempArray)):
-			if(tempArray[j].lvl-1 == tempArray[i].lvl):
+		for j in range(i+1,len(temp_array)):
+			if(temp_array[j].lvl-1 == temp_array[i].lvl):
 				if(rightSide == ""):
-					rightSide += tempArray[j].rule
+					rightSide += temp_array[j].rule
 				else:
-					rightSide += " " + tempArray[j].rule
-			if(j == len(tempArray)-1 or tempArray[j].lvl == tempArray[i].lvl):
+					rightSide += " " + temp_array[j].rule
+			if(j == len(temp_array)-1 or temp_array[j].lvl == temp_array[i].lvl):
 				if rightSide != "" :
-					saveRule(Rule(tempArray[i].rule,rightSide))
+					save_rule(Rule(temp_array[i].rule,rightSide))
 				break
 
-def saveRule(newRule):
-
-	if newRule.leftSide in ruleCount:
-		ruleCount[newRule.leftSide] += 1
+def save_rule(newRule):
+	if newRule.leftSide in rule_count:
+		rule_count[newRule.leftSide] += 1
 	else:
-		ruleCount[newRule.leftSide] = 1
+		rule_count[newRule.leftSide] = 1
 		rules.append(newRule.leftSide)
 
-	if newRule.leftSide in ruleDict:
-			if newRule.rightSide in ruleDict[newRule.leftSide]:
-				ruleDict[newRule.leftSide][newRule.rightSide] += 1
+	if newRule.leftSide in rule_dict:
+			if newRule.rightSide in rule_dict[newRule.leftSide]:
+				rule_dict[newRule.leftSide][newRule.rightSide] += 1
 			else:
-				ruleDict[newRule.leftSide][newRule.rightSide] = 1
+				rule_dict[newRule.leftSide][newRule.rightSide] = 1
 	else:
-		ruleDict[newRule.leftSide] = dict()
-		ruleDict[newRule.leftSide][newRule.rightSide] = 1
+		rule_dict[newRule.leftSide] = dict()
+		rule_dict[newRule.leftSide][newRule.rightSide] = 1
 
-def fixProbs():
+def fix_probs():
 	for rule in rules:
-		for key, value in ruleDict[rule].iteritems():
-			f = float(value)/ruleCount[rule]
-			ruleDict[rule][key] = f
+		for key, value in rule_dict[rule].iteritems():
+			f = float(value)/rule_count[rule]
+			rule_dict[rule][key] = f
 
-def writeFile(file_name):
+def write_file(file_name):
 	print "Printing output...(",file_name,")",
 	f = open(file_name, 'w')
 	i = 0
 	for rule in rules:
-		for key, value in ruleDict[rule].iteritems():
+		for key, value in rule_dict[rule].iteritems():
 			f.write('{num:{fill}{width}} '.format(num=i, fill='0', width=5))
 			f.write(rule)
 			f.write(' ')
@@ -74,11 +73,7 @@ def writeFile(file_name):
 	f.close()
 	print "completed successfully"
 
-
-def printRules():
-	pprint(ruleDict)
-
-def parseDocument(inputText,start,lvl):
+def parse_document(inputText,start,lvl):
 	openP = 0
 	closeP = 0
 	a = ""
@@ -88,20 +83,20 @@ def parseDocument(inputText,start,lvl):
 		progress = float(i+1)/len(inputText) * 100
 		update_progress(int(progress))
 		if (inputText[i] == "\n" ):
-			createRules()
-			del tempArray[:]
+			create_rules()
+			del temp_array[:]
 			i += 1
 			lvl = -1
 		elif (inputText[i] == ")"):
 			if(a != "" and a != " "):
-				fixRules(a,lvl)
+				fix_rules(a,lvl)
 				a = ""
 			closeP += 1
 			if (openP != closeP):
 				lvl -= 1
 		elif (inputText[i] == "("):
 			if(a != "" and a != " "):				
-				fixRules(a,lvl)
+				fix_rules(a,lvl)
 				a = ""
 			openP += 1
 			lvl += 1
@@ -109,18 +104,18 @@ def parseDocument(inputText,start,lvl):
 			a += inputText[i]
 	print "Parsing document completed successfully"
 	
-def fixRules(inputString,level):
+def fix_rules(inputString,level):
 	fixed = ""
 	lvlOff = 0
 	for i in range(len(inputString)):
 		if(inputString[i] == " "):
 			if(fixed != ""):
-				tempArray.append(ParsedRules(fixed, level + lvlOff))
+				temp_array.append(parsed_rules(fixed, level + lvlOff))
 				lvlOff += 1
 			fixed = ""
 		else:
 			fixed += inputString[i]
 			if(i == len(inputString)-1):
-				tempArray.append(ParsedRules(fixed, level + lvlOff))
+				temp_array.append(parsed_rules(fixed, level + lvlOff))
 				lvlOff += 1
 				fixed = ""
