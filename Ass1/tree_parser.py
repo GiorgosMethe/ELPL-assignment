@@ -69,7 +69,7 @@ def writeFile():
 			f.write(key)
 			f.write(' ')
 			f.write(str(value))
-			f.write('\n')
+			f.write(' \n')
 			i += 1
 	f.close()
 	print "completed successfully"
