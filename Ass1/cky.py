@@ -9,7 +9,7 @@ rulesRL = defaultdict(set)
 sentences = []
 start_node = "TOP"
 unknown_node = "@UNKNOWN"
-numeral_node = "@NUMBER"
+numeral_node = "CD"
 
 """Holds information about each rule in every chart_item
 position
@@ -24,7 +24,7 @@ def read_pcfg(file_name):
 	"""Reads the grammar rules from the output of the pcfg
 	parser.
 	Output: writes the rulesRL dictionary
-    """
+	"""
 	for line in open(file_name, "r"):
 		values = line.split(" ")
 		if len(values) == 6:
@@ -48,6 +48,13 @@ def read_sentences(file_name):
 				break
 			temp.append(item)
 		sentences.append(temp)
+
+def is_number(s):
+	try:
+		float(s)
+		return True
+	except ValueError:
+		return False
 
 def read_sentences_input(sentence):
 	"""Reads sentence from terminal
@@ -106,8 +113,47 @@ def cky_parsing(s):
 					if not s[i] in chart[i,i+1][key]:
 						chart[i,i+1][key][s[i]] = chart_item(value, 0, False)
 		else:
-			chart[i,i+1][unknown_rule] = {}
-			chart[i,i+1][unknown_rule][s[i]] = chart_item(value, 0, False)
+			""" UNKNOWN right side rule,
+			we can decide a approximately and with a naive approach,
+			to give words a non terminal rule.
+			"""
+			num = False
+			for c in s[i]:
+				if c in ['0','1','2','3','4','5','6','7','8','9']:
+					num = True
+			if is_number(s[i]) or num:
+				chart[i,i+1][numeral_node] = {}
+				chart[i,i+1][numeral_node][s[i]] = chart_item(1.0, 0, False)
+			elif len(s[i]) > 4:
+				p = False
+				for c in s[i]:
+					if c == "-":
+						p = True
+				if (s[i][(len(s[i])-2):(len(s[i]))] == "ly" or
+				 s[i][(len(s[i])-1):(len(s[i]))] == "y"):
+					pass
+					#ADV
+				elif p or (s[i][(len(s[i])-4):(len(s[i]))] == "able" or
+				 s[i][(len(s[i])-2):(len(s[i]))] == "ed"):
+					pass
+					#ADJ
+				elif (s[i][(len(s[i])-2):(len(s[i]))] == "er" or
+				s[i][(len(s[i])-3):(len(s[i]))] == "ers" or 
+				s[i][(len(s[i])-2):(len(s[i]))] == "es" or 
+				s[i][(len(s[i])-1):(len(s[i]))] == "s" or
+				s[i][(len(s[i])-3):(len(s[i]))] == "ist" or
+				s[i][(len(s[i])-4):(len(s[i]))] == "ists" or
+				s[i][(len(s[i])-3):(len(s[i]))] == "ion" or
+				s[i][(len(s[i])-3):(len(s[i]))] == "ing"):
+					pass
+					#N
+				else:
+					pass
+					#name, uknown
+			else:
+				pass
+				#name, uknown
+
 		check_unaries(chart[i,i+1])
 		
 	n = len(s)+1
@@ -134,12 +180,8 @@ def print_top_productions(chart,n):
 	"""prints the top production in the upper right 
 	corner of the chart table
     """
-	for i in range(n):
-		for j in range(n):
-			if (i,j) in chart:
-				if i == 0 and j == n-2:
-					for key,value in chart[i,j].iteritems():
-						if key == start_node:
-							for key1,value1 in chart[i,j][key].iteritems():
-								print key,key1
+	for key,value in chart[0,n-2].iteritems():
+		if key == start_node:
+			for key1,value1 in chart[0,n-2][key].iteritems():
+				print key,key1
 	
