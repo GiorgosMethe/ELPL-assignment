@@ -1,4 +1,8 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Parser}{}% 2
-\BOOKMARK [1][-]{section.3}{CYK Algorithm}{}% 3
-\BOOKMARK [1][-]{section.4}{Conclusion}{}% 4
+\BOOKMARK [1][-]{section.2}{Statistical Parsing}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Stochastic/Probabilistic context-free grammar \(SCFG or PCFG\)}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Implementation of the PCFG parser}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Results}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{CYK Algorithm}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{Implementation of the CYK Algorithm}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Conclusion}{}% 8

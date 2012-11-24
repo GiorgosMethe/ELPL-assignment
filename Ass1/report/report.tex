@@ -22,6 +22,8 @@
 \usepackage{lmodern}
 \usepackage{amsthm}
 \usepackage{epstopdf}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usetikzlibrary{positioning}
 
 \hypersetup{
@@ -54,14 +56,15 @@
 
 
 \begin{center}
+{\Large University of Amsterdam}\\ \vspace{0.1cm}
 {\LARGE \textbf{Elements of Language Processing and Learning}}\\ [1em]
 \end{center}
 \mywebheader
 
 \begin{center}
-{\Large By:} \\ \vspace{0.1cm}
-{\Large Georgios Methenitis, Stud.Id:10407537} \\ \vspace{0.1cm}
-{\Large Marios Tzakris, Stud.Id:10407537}
+{\Large By:} \\ \vspace{0.2cm}
+{\Large Georgios Methenitis, 10407537} \\ \vspace{0.1cm}
+{\Large Marios Tzakris, 10407537}\\
 \end{center}
 
 
@@ -71,16 +74,150 @@ are going to describe the implementation of the CYK algorithm as well as, our as
  
 
 
-\section{Parser}
+\section{Statistical Parsing}
 \label{parser}
-Each rule is represented by the non-terminal left-hand side node, and the right-side node or nodes. a typical example of  binary rule is this: $X \rightarrow \alpha\	 \beta$. In general in our treebanks there were mostly binary rules but in some cases we had to handle and unary rules which have this form: $X \rightarrow \alpha$.
+Statistical parsing is a parsing method for natural language processing. The key idea behind this procedure, is the association between grammar rules from the linguistics point of view with probabilities of each one of them. Make it feasible for us, to be able to parse, and compute the probability of a complete parse of a sentence. 
+
+\subsection{Stochastic/Probabilistic context-free grammar (SCFG or PCFG)}
+A probabilistic context-free grammar is a set of rules in which each production is augmented with a probability. Each rule is represented by the non-terminal left-hand side node, and the right-side node or nodes. In our particular data-set there are only binary and unary rules. A typical example of  binary rule is this: $X \rightarrow \alpha\	 \beta$. In general in our treebanks there were mostly binary rules but in some cases we had to handle and unaries which have this form: $X \rightarrow \alpha$. Each rule has a probability and this probability is given by: $P(X \rightarrow \alpha | X)$, or $P(X \rightarrow \alpha \beta| X)$, for the above two examples of rules. So, we can derive that the probabilty of each rule is given by the frequency of the right hand nodes, given the left hand nodes of a rule. Assuming that, the frequency of each specific rule is denoted by $f_r$, the non-terminal nodes by, $N_i$, and finally the productions which are a sequence of one or more non-terminal or terminal nodes by, $n_i$, we have:
+\[
+P(N_i \rightarrow n_i | N_i) = \cfrac{f_r(n_i | N_i)}{\parallel N_i \parallel}
+\]
+, where $f_r(n_i | N_i)$, is the number of times that $n_i$ is produced by the non-terminal node $N_i$ during the training.
+
+\subsection{Implementation of the PCFG parser}
+To parse the given treebank and extract the rules with their probabilities, we did not use a third-party library, instead we built our own parser. Given the treebank's form,
+\begin{verbatim}
+(TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
+\end{verbatim}
+we parse tree of the training set, keeping nodes and a level information according to the parenthesis level about each one of them. After this procedure our parsing table (1) looks like this:
+\begin{table}[h!]
+\begin{scriptsize}
+\begin{center}
+\begin{tabular}{ r r }
+\texttt{TOP} 0         &      \texttt{VP} 3 \\
+\texttt{S} 1           &      \texttt{VBZ} 4   \\
+\texttt{NP} 2          &      \texttt{plays} 5     \\           
+\texttt{NNP} 3         &      \texttt{NP} 4\\
+\texttt{Ms}. 4          &     \texttt{NNP} 5     \\                     
+\texttt{NNP} 3         &      \texttt{Elianti} 6\\
+\texttt{Haag} 4        &      \texttt{.} 3\\
+\texttt{S@} 2          &      \texttt{.} 4
+\end{tabular}
+\end{center}
+\end{scriptsize}
+\end{table}
+
+\begin{algorithm}[t!]
+\caption{Rule Production}
+\label{rule}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$Nodes\_Table$ (1)
+\STATE {\bf Output: }$Rules$
+\STATE
+\FOR{{\bf i} $\in\ (0,\textbf{length}(Nodes\_Table)-1)$}
+\STATE $rightSide = \emptyset$
+\FOR{{\bf j} $\in\ (i+1,\textbf{length}(Nodes\_Table))$}
+\IF{$(Nodes\_Table[j].level-1 == Nodes\_Table[i].level)$}
+\IF{$(rightSide == \emptyset)$}
+\STATE{$rightSide \rightarrow Nodes\_Table[j].rule$}
+\ELSE
+\STATE{$rightSide \rightarrow rule,Nodes\_Table[j].rule$}
+\ENDIF
+\ENDIF
+\IF{$(j == \textbf{lenth}(Nodes\_Table)-1\ \textbf{or}\ Nodes\_Table[j].level == Nodes\_Table[i].level)$}
+\IF{$(rightSide == \emptyset)$}
+\STATE{$ \textbf{save\_rule}(Rule(Nodes\_Table[i].rule,rightSide))$}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{small}
+\end{algorithm}
 
 
+Algorithm~\ref{rule}, presents in pseudo-code this procedure. This algorithm starts from each node heading towards the end of this list until it comes along with a node of the same level or with the end. In this process if there is a node with level one more than the current node, this node automatically infers that it is its child. The result rules derived by the above example sentence are following:
+\begin{table}[h!]
+\begin{scriptsize}
+\begin{center}
+\begin{tabular}{ l l }
+$\texttt{TOP} \rightarrow\ \texttt{S}$ & $\texttt{VP} \rightarrow \texttt{VBZ NP}$ \\
+$\texttt{S} \rightarrow \texttt{NP S@}$ & $\texttt{VBZ} \rightarrow \texttt{plays}$ \\
+$\texttt{NP} \rightarrow \texttt{NNP NNP}$ & $\texttt{NP} \rightarrow \texttt{NNP}$ \\
+$\texttt{NNP} \rightarrow \texttt{Ms.}$ & $\texttt{NNP} \rightarrow \texttt{Elianti}$ \\
+$\texttt{NNP} \rightarrow \texttt{Haag}$ & $\texttt{S@} \rightarrow \texttt{VP .}$  \\
+$\texttt{.} 	\rightarrow \texttt{.}$ & $ $
+\end{tabular}
+\end{center}
+\end{scriptsize}
+\end{table}
 
+\subsection{Results}
+After running our parser in the complete training set, we got all rules, the frequency for every production of each rule, and the number of appearances for every non-terminal node. From this data, we extracted the complete PCFG grammar from the training set in a file with the following form:
+\begin{verbatim}
+<id>   <Non-Terminal>   <Production>        <Probability>
+00000       TOP          FRAG%%%%%NP      0.000225954658432 
+00457       NP           ADVP NNS         6.53558462438e-06
+\end{verbatim}
 
 \section{CYK Algorithm}
 \label{cyk}
-agargbarebeatb
+In computer science, the Cocke-Younger-Kasami (CYK) algorithm, is a parsing algorithm for context-free grammars. It employs bottom-up parsing and dynamic programming, considering all possible productions that can generate a sentence. In this algorithm, we want to fill a chart with non-terminal nodes in order to be able to consider all possible trees.
+The CKY algorithm scans the words of the sentence attempting to add non-terminal nodes to its chart. For each production of a non-terminal node that is matched from the PCFG grammar we add this left side node to the chart. To improve its performance we didn't iterate on all possible non-terminal nodes, instead we have used a dictionary to index every node added to the chart.
+
+\begin{algorithm}[t!]
+\caption{CYK Algorithm}
+\label{cky}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$RulesRL[]$, $Sentence\ S[]$
+\STATE {\#$RulesRL$}, is a dictionary in which for every production $p$, gives $RulesRL[p]$ non-terminal nodes which have this production.
+\STATE {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$
+\FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
+\IF{$S[i]$ $\notin$ $RulesRL[]$}
+\STATE{$\textbf{handle\_unknown\_word}(S[i])$}
+\ELSE
+\FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
+\STATE{$Chart[i][i+1].\textbf{add}(node)$}
+\ENDFOR
+\ENDIF
+\STATE{$\textbf{check\_unaries}(Chart[i][i+1])$}
+\ENDFOR
+\STATE $n = \textbf{length}(S) + 1$
+\FOR{{\bf span} $\in$ (2,n)}
+\FOR{{\bf begin} $\in$ (0,n-span)}
+\STATE $end = begin + span$
+\FOR{{\bf split} $\in$ (begin,end)}
+\FOR{{\bf nodeL} $\in$ $chart[begin][split]$}
+\FOR{{\bf nodeR} $\in$ $chart[split][end]$}
+\FOR{{\bf node} $\in$ $RulesRL[nodeL,nodeR]$ \textbf{and} \textbf{node} $\notin$ $Chart[begin][end]$}
+\STATE{$Chart[begin][end].\textbf{add}(node)$}
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\STATE{$\textbf{check\_unaries}(Chart[begin][end])$}
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
+\subsection{Implementation of the CYK Algorithm}
+Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, we are using on less loop than the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in python to store the nodes in every chart position. 
+
+\begin{algorithm}[t!]
+\caption{Unaries Handling}
+\label{unaries}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
 
 \section{Conclusion}
 \label{concl}

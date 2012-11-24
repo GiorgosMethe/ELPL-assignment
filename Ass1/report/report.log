@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2012.10.19)  24 NOV 2012 15:00
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Debian) (format=pdflatex 2012.10.19)  24 NOV 2012 19:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -692,64 +692,105 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 )))
+(./algorithm.sty
+Package: algorithm 
+
+Document Style `algorithm' - floating environment
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count184
+\float@exts=\toks38
+\float@box=\box38
+\@float@everytoks=\toks39
+\@floatcapt=\box39
+)
+\@float@every@algorithm=\toks40
+\c@algorithm=\count185
+) (./algorithmic.sty
+Package: algorithmic 2005/07/05
+
+Document Style `algorithmic' - environment
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count186
+\calc@Bcount=\count187
+\calc@Adimen=\dimen181
+\calc@Bdimen=\dimen182
+\calc@Askip=\skip79
+\calc@Bskip=\skip80
+LaTeX Info: Redefining \setlength on input line 76.
+LaTeX Info: Redefining \addtolength on input line 77.
+\calc@Ccount=\count188
+\calc@Cskip=\skip81
+)
+\c@ALC@line=\count189
+\c@ALC@rem=\count190
+\c@ALC@depth=\count191
+\ALC@tlm=\skip82
+\algorithmicindent=\skip83
+)
 (/usr/share/texmf/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryposit
 ioning.code.tex
 File: tikzlibrarypositioning.code.tex 2008/10/06 v2.10 (rcs-revision 1.7)
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 33.
- (./report.aux)
+Package hyperref Info: Option `colorlinks' set `true' on input line 35.
+ (./report.aux
+
+LaTeX Warning: Label `cky' multiply defined.
+
+)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 55.
  (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count184
-\scratchdimen=\dimen181
-\scratchbox=\box38
-\nofMPsegments=\count185
-\nofMParguments=\count186
-\everyMPshowfont=\toks38
-\MPscratchCnt=\count187
-\MPscratchDim=\dimen182
-\MPnumerator=\count188
-\makeMPintoPDFobject=\count189
-\everyMPtoPDFconversion=\toks39
+\scratchcounter=\count192
+\scratchdimen=\dimen183
+\scratchbox=\box40
+\nofMPsegments=\count193
+\nofMParguments=\count194
+\everyMPshowfont=\toks41
+\MPscratchCnt=\count195
+\MPscratchDim=\dimen184
+\MPnumerator=\count196
+\makeMPintoPDFobject=\count197
+\everyMPtoPDFconversion=\toks42
 )
-\AtBeginShipoutBox=\box39
+\AtBeginShipoutBox=\box41
 
 
 Package hyperref Warning: Height of page (\stockheight) is invalid (0.0pt),
 (hyperref)                using 11in.
 
-Package hyperref Info: Link coloring ON on input line 53.
+Package hyperref Info: Link coloring ON on input line 55.
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count190
+\c@section@level=\count198
 )
-LaTeX Info: Redefining \ref on input line 53.
-LaTeX Info: Redefining \pageref on input line 53.
-LaTeX Info: Redefining \nameref on input line 53.
+LaTeX Info: Redefining \ref on input line 55.
+LaTeX Info: Redefining \pageref on input line 55.
+LaTeX Info: Redefining \nameref on input line 55.
 
 (./report.out) (./report.out)
 \@outlinefile=\write4
@@ -757,82 +798,507 @@ LaTeX Info: Redefining \nameref on input line 53.
 
  ABD: EveryShipout initializing macros
 
-Package layouts Warning: Layout scale set to 0.5 on input line 53.
+Package layouts Warning: Layout scale set to 0.5 on input line 55.
 
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 59.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 62.
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 59.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 62.
 
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 59.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 62.
 
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 59.
+(Font)              <10.95> on input line 62.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 59.
+(Font)              <8> on input line 62.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 59.
-LaTeX Font Info:    Try loading font information for U+msa on input line 59.
+(Font)              <6> on input line 62.
+LaTeX Font Info:    Try loading font information for U+msa on input line 62.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 59.
+LaTeX Font Info:    Try loading font information for U+msb on input line 62.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 59.
+(Font)              <12> on input line 62.
 
-Overfull \hbox (133.7529pt too wide) in paragraph at lines 59--59
+Overfull \hbox (133.7529pt too wide) in paragraph at lines 62--62
 []|[][][][][][]| 
  []
 
 
-Overfull \hbox (179.32709pt too wide) in paragraph at lines 59--60
+Overfull \hbox (179.32709pt too wide) in paragraph at lines 62--63
 [] 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 89.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 89.
+LaTeX Font Info:    Try loading font information for OT1+lmtt on input line 90.
+
+
+(/usr/share/texmf/tex/latex/lm/ot1lmtt.fd
+File: ot1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 97.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 112.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 116.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 116.
+ [2pdfTeX warning (ext4): destination with the same identifier (name{ALC@rem.1}
+) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      pdfTeX warning (ext4): destination with the same identifi
+er (name{ALC@rem.1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.159 \begin{verbatim}
+                      ]pdfTeX warning (ext4): destination with the same identif
+ier (name{ALC@line.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.175 \STATE
+             {\bf Input: }$RulesRL[]$, $Sentence\ S[]$pdfTeX warning (ext4): de
+stination with the same identifier (name{ALC@rem.1}) has been already used, dup
+licate ignored
+<to be read again> 
+                   \relax 
+l.175 \STATE
+             {\bf Input: }$RulesRL[]$, $Sentence\ S[]$pdfTeX warning (ext4): de
+stination with the same identifier (name{ALC@line.2}) has been already used, du
+plicate ignored
+<to be read again> 
+                   \relax 
+l.176 \STATE
+             {\#$RulesRL$}, is a dictionary in which for every production $p...
+pdfTeX warning (ext4): destination with the same identifier (name{ALC@rem.1}) h
+as been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.176 \STATE
+             {\#$RulesRL$}, is a dictionary in which for every production $p...
+pdfTeX warning (ext4): destination with the same identifier (name{ALC@line.3}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.177 \STATE
+             {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$p
+dfTeX warning (ext4): destination with the same identifier (name{ALC@rem.1}) ha
+s been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.177 \STATE
+             {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$p
+dfTeX warning (ext4): destination with the same identifier (name{ALC@line.4}) h
+as been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.178 \FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
+                                                pdfTeX warning (ext4): destinat
+ion with the same identifier (name{ALC@rem.1}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.178 \FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
+                                                pdfTeX warning (ext4): destinat
+ion with the same identifier (name{ALC@line.5}) has been already used, duplicat
+e ignored
+<to be read again> 
+                   \relax 
+l.179 \IF{$S[i]$ $\notin$ $RulesRL[]$}
+                                      pdfTeX warning (ext4): destination with t
+he same identifier (name{ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.179 \IF{$S[i]$ $\notin$ $RulesRL[]$}
+                                      pdfTeX warning (ext4): destination with t
+he same identifier (name{ALC@line.6}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.180 \STATE
+            {$\textbf{handle\_unknown\_word}(S[i])$}pdfTeX warning (ext4): dest
+ination with the same identifier (name{ALC@rem.1}) has been already used, dupli
+cate ignored
+<to be read again> 
+                   \relax 
+l.180 \STATE
+            {$\textbf{handle\_unknown\_word}(S[i])$}pdfTeX warning (ext4): dest
+ination with the same identifier (name{ALC@line.7}) has been already used, dupl
+icate ignored
+<to be read again> 
+                   \relax 
+l.182 \FOR
+          {{\bf node} $\in$ $RulesRL[S[i]]$}pdfTeX warning (ext4): destination 
+with the same identifier (name{ALC@rem.1}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.182 \FOR
+          {{\bf node} $\in$ $RulesRL[S[i]]$}pdfTeX warning (ext4): destination 
+with the same identifier (name{ALC@line.8}) has been already used, duplicate ig
+nored
+<to be read again> 
+                   \relax 
+l.182 \FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
+                                            pdfTeX warning (ext4): destination 
+with the same identifier (name{ALC@rem.1}) has been already used, duplicate ign
+ored
+<to be read again> 
+                   \relax 
+l.182 \FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
+                                            pdfTeX warning (ext4): destination 
+with the same identifier (name{ALC@line.9}) has been already used, duplicate ig
+nored
+<to be read again> 
+                   \relax 
+l.183 \STATE
+            {$Chart[i][i+1].\textbf{add}(node)$}pdfTeX warning (ext4): destinat
+ion with the same identifier (name{ALC@rem.1}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.183 \STATE
+            {$Chart[i][i+1].\textbf{add}(node)$}pdfTeX warning (ext4): destinat
+ion with the same identifier (name{ALC@line.10}) has been already used, duplica
+te ignored
+<to be read again> 
+                   \relax 
+l.184 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.184 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@line.11}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.185 \ENDIF
+            pdfTeX warning (ext4): destination with the same identifier (name{A
+LC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.185 \ENDIF
+            pdfTeX warning (ext4): destination with the same identifier (name{A
+LC@line.12}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.186 \STATE
+            {$\textbf{check\_unaries}(Chart[i][i+1])$}pdfTeX warning (ext4): de
+stination with the same identifier (name{ALC@rem.1}) has been already used, dup
+licate ignored
+<to be read again> 
+                   \relax 
+l.186 \STATE
+            {$\textbf{check\_unaries}(Chart[i][i+1])$}pdfTeX warning (ext4): de
+stination with the same identifier (name{ALC@line.13}) has been already used, d
+uplicate ignored
+<to be read again> 
+                   \relax 
+l.187 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.187 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@line.14}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.188 \STATE
+             $n = \textbf{length}(S) + 1$pdfTeX warning (ext4): destination wit
+h the same identifier (name{ALC@rem.1}) has been already used, duplicate ignore
+d
+<to be read again> 
+                   \relax 
+l.188 \STATE
+             $n = \textbf{length}(S) + 1$pdfTeX warning (ext4): destination wit
+h the same identifier (name{ALC@line.15}) has been already used, duplicate igno
+red
+<to be read again> 
+                   \relax 
+l.189 \FOR{{\bf span} $\in$ (2,n)}
+                                  pdfTeX warning (ext4): destination with the s
+ame identifier (name{ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.189 \FOR{{\bf span} $\in$ (2,n)}
+                                  pdfTeX warning (ext4): destination with the s
+ame identifier (name{ALC@line.16}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.190 \FOR{{\bf begin} $\in$ (0,n-span)}
+                                        pdfTeX warning (ext4): destination with
+ the same identifier (name{ALC@rem.1}) has been already used, duplicate ignored
+
+<to be read again> 
+                   \relax 
+l.190 \FOR{{\bf begin} $\in$ (0,n-span)}
+                                        pdfTeX warning (ext4): destination with
+ the same identifier (name{ALC@line.17}) has been already used, duplicate ignor
+ed
+<to be read again> 
+                   \relax 
+l.191 \STATE
+             $end = begin + span$pdfTeX warning (ext4): destination with the sa
+me identifier (name{ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.191 \STATE
+             $end = begin + span$pdfTeX warning (ext4): destination with the sa
+me identifier (name{ALC@line.18}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.192 \FOR{{\bf split} $\in$ (begin,end)}
+                                         pdfTeX warning (ext4): destination wit
+h the same identifier (name{ALC@rem.1}) has been already used, duplicate ignore
+d
+<to be read again> 
+                   \relax 
+l.192 \FOR{{\bf split} $\in$ (begin,end)}
+                                         pdfTeX warning (ext4): destination wit
+h the same identifier (name{ALC@line.19}) has been already used, duplicate igno
+red
+<to be read again> 
+                   \relax 
+l.193 ...{{\bf nodeL} $\in$ $chart[begin][split]$}
+                                                  pdfTeX warning (ext4): destin
+ation with the same identifier (name{ALC@rem.1}) has been already used, duplica
+te ignored
+<to be read again> 
+                   \relax 
+l.193 ...{{\bf nodeL} $\in$ $chart[begin][split]$}
+                                                  pdfTeX warning (ext4): destin
+ation with the same identifier (name{ALC@line.20}) has been already used, dupli
+cate ignored
+<to be read again> 
+                   \relax 
+l.194 \FOR{{\bf nodeR} $\in$ $chart[split][end]$}
+                                                 pdfTeX warning (ext4): destina
+tion with the same identifier (name{ALC@rem.1}) has been already used, duplicat
+e ignored
+<to be read again> 
+                   \relax 
+l.194 \FOR{{\bf nodeR} $\in$ $chart[split][end]$}
+                                                 pdfTeX warning (ext4): destina
+tion with the same identifier (name{ALC@rem.1}) has been already used, duplicat
+e ignored
+<to be read again> 
+                   \relax 
+l.195 ...extbf{node} $\notin$ $Chart[begin][end]$}
+                                                  pdfTeX warning (ext4): destin
+ation with the same identifier (name{ALC@rem.1}) has been already used, duplica
+te ignored
+<to be read again> 
+                   \relax 
+l.196 \STATE
+            {$Chart[begin][end].\textbf{add}(node)$}pdfTeX warning (ext4): dest
+ination with the same identifier (name{ALC@rem.1}) has been already used, dupli
+cate ignored
+<to be read again> 
+                   \relax 
+l.197 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.198 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.199 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.200 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.201 \STATE
+            {$\textbf{check\_unaries}(Chart[begin][end])$}pdfTeX warning (ext4)
+: destination with the same identifier (name{ALC@rem.1}) has been already used,
+ duplicate ignored
+<to be read again> 
+                   \relax 
+l.202 \ENDFOR
+             pdfTeX warning (ext4): destination with the same identifier (name{
+ALC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.203 \ENDFOR
+              [3]pdfTeX warning (ext4): destination with the same identifier (n
+ame{ALC@line.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.216 \STATE
+            pdfTeX warning (ext4): destination with the same identifier (name{A
+LC@rem.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.216 \STATE
+            
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 226.
+ [4]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 226.
  (./report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 89.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 89.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 226.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 226.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 6E3C89A5822FF52CD74D7E7C8999BFD2;181.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 89.
+(rerunfilecheck)             Checksum: 39964AD533D8111485CD571DF6400588;527.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 226.
  ) 
 Here is how much of TeX's memory you used:
- 14719 strings out of 493485
- 257163 string characters out of 3143525
- 341404 words of memory out of 3000000
- 17722 multiletter control sequences out of 15000+200000
- 34962 words of font info for 41 fonts, out of 3000000 for 9000
+ 15115 strings out of 493485
+ 262137 string characters out of 3143525
+ 360630 words of memory out of 3000000
+ 18047 multiletter control sequences out of 15000+200000
+ 67175 words of font info for 66 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 56i,13n,55p,548b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}</usr/s
-hare/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/publi
-c/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/t
-exmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lm
-sy10.pfb>
-Output written on report.pdf (1 page, 91401 bytes).
+ 56i,13n,55p,1047b,972s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dv
+ips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rmtt.enc}{/usr/sha
+re/texmf/fonts/enc/dvips/lm/lm-mathit.enc}</usr/share/texmf/fonts/type1/public/
+lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/te
+xmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lm
+mi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fon
+ts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb><
+/usr/share/texmf/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/p
+ublic/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/sh
+are/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt8.pfb>
+Output written on report.pdf (4 pages, 250172 bytes).
 PDF statistics:
- 59 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
- 6 named destinations out of 1000 (max. 500000)
- 45 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 166 PDF objects out of 1000 (max. 8388607)
+ 145 compressed objects within 2 object streams
+ 46 named destinations out of 1000 (max. 500000)
+ 77 words of extra memory for PDF output out of 10000 (max. 10000000)
 
