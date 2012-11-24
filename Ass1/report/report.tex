@@ -206,14 +206,25 @@ The CKY algorithm scans the words of the sentence attempting to add non-terminal
 \end{algorithm}
 
 \subsection{Implementation of the CYK Algorithm}
-Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, we are using on less loop than the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in python to store the nodes in every chart position. 
+Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, there are some differences to the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in python to store the nodes in every chart position. So, we don't iterate over all non-terminal nodes but only over the existing in each chart cell.
 
 \begin{algorithm}[t!]
 \caption{Unaries Handling}
 \label{unaries}
 \begin{small}
 \begin{algorithmic}[1]
-\STATE
+\STATE {\bf Input: }$Chart[i][j]$
+\STATE {\bf Output: }Updated $Chart[i][j]$
+\STATE{$added = true$}
+\WHILE{$added$}
+\STATE{$added = false$}
+\FOR{{\bf ref\_node} $\in$ $chart[i][j]$}
+\FOR{{\bf node} $\in$ $RulesRL[ref\_node]$ \textbf{and} \textbf{node} $\notin$ $Chart[i][j]$ \textbf{and} \textbf{node}$=="TOP"$}
+\STATE{$Chart[i][j].\textbf{add}(node)$}
+\STATE $added = true$
+\ENDFOR
+\ENDFOR
+\ENDWHILE
 \end{algorithmic}
 \end{small}
 \end{algorithm}

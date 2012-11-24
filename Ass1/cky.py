@@ -54,6 +54,50 @@ def read_sentences(file_name):
 			temp.append(item)
 		sentences.append(temp)
 
+def handle_unknown_words(unknown_word):
+	""" UNKNOWN right side rule,
+	we can decide a approximately and with a naive approach,
+	to give words a non terminal rule.
+	"""
+	num = False
+	for c in unknown_word:
+		if c in ['0','1','2','3','4','5','6','7','8','9']:
+			num = True
+	if is_number(unknown_word) or num:
+		return numeral_node
+	elif len(unknown_word) > 4:
+		p = False
+		for c in unknown_word:
+			if c == "-":
+				p = True
+		if (unknown_word[(len(unknown_word)-2):(len(unknown_word))] == "ly" or
+		 unknown_word[(len(unknown_word)-1):(len(unknown_word))] == "y"):
+			return adverb_node
+		elif p or (unknown_word[(len(unknown_word)-4):(len(unknown_word))] == "able" or
+		 unknown_word[(len(unknown_word)-2):(len(unknown_word))] == "ed"):
+			return adjective_node
+		elif (unknown_word[(len(unknown_word)-2):(len(unknown_word))] == "er" or
+		unknown_word[(len(unknown_word)-3):(len(unknown_word))] == "ers" or 
+		unknown_word[(len(unknown_word)-2):(len(unknown_word))] == "es" or 
+		unknown_word[(len(unknown_word)-1):(len(unknown_word))] == "s" or
+		unknown_word[(len(unknown_word)-3):(len(unknown_word))] == "ist" or
+		unknown_word[(len(unknown_word)-4):(len(unknown_word))] == "ists" or
+		unknown_word[(len(unknown_word)-3):(len(unknown_word))] == "ion" or
+		unknown_word[(len(unknown_word)-3):(len(unknown_word))] == "ing"):
+			return noun_node
+		else:
+			a = math.random()
+			if a < 0.8:
+				return name_node
+			else:
+				return noun_node
+	else:
+		a = math.random()
+		if a < 0.8:
+			return name_node
+		else:
+			return noun_node
+
 def is_number(s):
 	try:
 		float(s)
@@ -94,13 +138,15 @@ def check_unaries(chart):
 		for key, value in tempChart.iteritems():
 			if key in rulesRL:
 				for key1,value1 in rulesRL[key].iteritems():
-					if type(chart[key1]) != type({}):
-						chart[key1] = {}
-						chart[key1][key] = chart_item(value, 0, True)
-					else:
-						if not key in chart[key1]:
+					if key1 == start_node:
+						if type(chart[key1]) != type({}):
+							chart[key1] = {}
 							chart[key1][key] = chart_item(value, 0, True)
-		tempChart = chart.copy()
+							added = True
+						else:
+							if not key in chart[key1]:
+								chart[key1][key] = chart_item(value, 0, True)
+								added = True
 
 def cky_parsing(s):
 	"""cky parser from stanford slides
@@ -118,56 +164,9 @@ def cky_parsing(s):
 					if not s[i] in chart[i,i+1][key]:
 						chart[i,i+1][key][s[i]] = chart_item(value, 0, False)
 		else:
-			""" UNKNOWN right side rule,
-			we can decide a approximately and with a naive approach,
-			to give words a non terminal rule.
-			"""
-			num = False
-			for c in s[i]:
-				if c in ['0','1','2','3','4','5','6','7','8','9']:
-					num = True
-			if is_number(s[i]) or num:
-				chart[i,i+1][numeral_node] = {}
-				chart[i,i+1][numeral_node][s[i]] = chart_item(1.0, 0, False)
-			elif len(s[i]) > 4:
-				p = False
-				for c in s[i]:
-					if c == "-":
-						p = True
-				if (s[i][(len(s[i])-2):(len(s[i]))] == "ly" or
-				 s[i][(len(s[i])-1):(len(s[i]))] == "y"):
-					chart[i,i+1][adverb_node] = {}
-					chart[i,i+1][adverb_node][s[i]] = chart_item(1.0, 0, False)
-				elif p or (s[i][(len(s[i])-4):(len(s[i]))] == "able" or
-				 s[i][(len(s[i])-2):(len(s[i]))] == "ed"):
-					chart[i,i+1][adjective_node] = {}
-					chart[i,i+1][adjective_node][s[i]] = chart_item(1.0, 0, False)
-				elif (s[i][(len(s[i])-2):(len(s[i]))] == "er" or
-				s[i][(len(s[i])-3):(len(s[i]))] == "ers" or 
-				s[i][(len(s[i])-2):(len(s[i]))] == "es" or 
-				s[i][(len(s[i])-1):(len(s[i]))] == "s" or
-				s[i][(len(s[i])-3):(len(s[i]))] == "ist" or
-				s[i][(len(s[i])-4):(len(s[i]))] == "ists" or
-				s[i][(len(s[i])-3):(len(s[i]))] == "ion" or
-				s[i][(len(s[i])-3):(len(s[i]))] == "ing"):
-					chart[i,i+1][noun_node] = {}
-					chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
-				else:
-					a = math.random()
-					if a < 0.8:
-						chart[i,i+1][name_node] = {}
-						chart[i,i+1][name_node][s[i]] = chart_item(1.0, 0, False)
-					else:
-						chart[i,i+1][noun_node] = {}
-						chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
-			else:
-				a = math.random()
-				if a < 0.8:
-					chart[i,i+1][name_node] = {}
-					chart[i,i+1][name_node][s[i]] = chart_item(1.0, 0, False)
-				else:
-					chart[i,i+1][noun_node] = {}
-					chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
+			most_probable = handle_unknown_words(s[i])
+			chart[i,i+1][most_probable] = {}
+			chart[i,i+1][most_probable][s[i]] = chart_item(1.0, 0, False)
 
 		check_unaries(chart[i,i+1])
 		
@@ -187,7 +186,7 @@ def cky_parsing(s):
 								else:
 									if not s[i] in chart[begin,end][key]:
 										chart[begin,end][key][(x,y)] = chart_item(value, split, False)
-			check_unaries(chart[begin,end])
+				check_unaries(chart[begin,end])
 	print_top_productions(chart,n)
 
 
