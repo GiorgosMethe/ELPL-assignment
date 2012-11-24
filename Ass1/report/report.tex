@@ -26,9 +26,9 @@
 
 \hypersetup{
   colorlinks,%
-    citecolor=black,%
-    filecolor=black,%
-    linkcolor=black,%
+    citecolor=blue,%
+    filecolor=blue,%
+    linkcolor=blue,%
     urlcolor=mygreylink     % can put red here to visualize the links
 }
 
@@ -47,7 +47,7 @@
 
 \newcommand{\mywebheader}{
   \begin{tabular}{@{}p{5in}p{4in}}
-  {\resheading{Project 1: Steps 1 \& 2}} & {\Large 25 November, 2012}\\\vspace{0.2cm}
+  {\resheading{Project 1: Statistical Parsing, Steps 1 \& 2}} & {\Large 25 November, 2012}\\\vspace{0.2cm}
   \end{tabular}}
 
 \begin{document}
@@ -60,17 +60,30 @@
 
 \begin{center}
 {\Large By:} \\ \vspace{0.1cm}
-{\Large Georgios Methenitis} \\ \vspace{0.1cm}
-{\Large Marios Tzakris}
+{\Large Georgios Methenitis, Stud.Id:10407537} \\ \vspace{0.1cm}
+{\Large Marios Tzakris, Stud.Id:10407537}
 \end{center}
 
 
 \section{Introduction}
-In this project we had to implement a prototype statistical parser. Having the given treebank we had to parse and extract the rules using this statistical parser. Each rule is represented by the non-terminal left-hand side node, and the right-side node or nodes. a typical example of  binary rule is this:
-$X \rightarrow \alpha\	 \beta$
-In general in our treebank there were mostly binary rules but in some cases we had to handle and unary rules which have this form: $X \rightarrow \alpha$.
+In this project we had to implement a prototype statistical parser. Having the given treebanks we had to parse and extract the rules using this statistical parser (Step 1), resulting to a probabilistic context free grammar (PCFg). Then, given this extracted grammar, we implement the Cocke-Younger-Kasami (CYK) algorithm, in order to parse some test sentences generating a parse-forest for each one of them. In Section~\ref{parser}, we are going to describe the implementation of our parser. In Section~\ref{cyk}, we  
+are going to describe the implementation of the CYK algorithm as well as, our assumptions in respect to the unknown words, and a brief explanation of every step of this algorithm through pseudo-code. Section~\ref{concl}, serves as an epilogue to the first two steps of this project.
+ 
 
+
+\section{Parser}
+\label{parser}
+Each rule is represented by the non-terminal left-hand side node, and the right-side node or nodes. a typical example of  binary rule is this: $X \rightarrow \alpha\	 \beta$. In general in our treebanks there were mostly binary rules but in some cases we had to handle and unary rules which have this form: $X \rightarrow \alpha$.
+
+
+
+
+\section{CYK Algorithm}
+\label{cyk}
+agargbarebeatb
 
 \section{Conclusion}
+\label{concl}
+In this first two steps, we have seen....
 
 \end{document}
