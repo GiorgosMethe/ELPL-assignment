@@ -1,4 +1,5 @@
 import sys
+import math
 from collections import defaultdict
 
 """ Dictionary to hold the rules from the extracted pcfg
@@ -10,6 +11,10 @@ sentences = []
 start_node = "TOP"
 unknown_node = "@UNKNOWN"
 numeral_node = "CD"
+adverb_node = "ADV"
+name_node = "NNP"
+noun_node = "N"
+adjective_node = "ADJP"
 
 """Holds information about each rule in every chart_item
 position
@@ -131,12 +136,12 @@ def cky_parsing(s):
 						p = True
 				if (s[i][(len(s[i])-2):(len(s[i]))] == "ly" or
 				 s[i][(len(s[i])-1):(len(s[i]))] == "y"):
-					pass
-					#ADV
+					chart[i,i+1][adverb_node] = {}
+					chart[i,i+1][adverb_node][s[i]] = chart_item(1.0, 0, False)
 				elif p or (s[i][(len(s[i])-4):(len(s[i]))] == "able" or
 				 s[i][(len(s[i])-2):(len(s[i]))] == "ed"):
-					pass
-					#ADJ
+					chart[i,i+1][adjective_node] = {}
+					chart[i,i+1][adjective_node][s[i]] = chart_item(1.0, 0, False)
 				elif (s[i][(len(s[i])-2):(len(s[i]))] == "er" or
 				s[i][(len(s[i])-3):(len(s[i]))] == "ers" or 
 				s[i][(len(s[i])-2):(len(s[i]))] == "es" or 
@@ -145,14 +150,24 @@ def cky_parsing(s):
 				s[i][(len(s[i])-4):(len(s[i]))] == "ists" or
 				s[i][(len(s[i])-3):(len(s[i]))] == "ion" or
 				s[i][(len(s[i])-3):(len(s[i]))] == "ing"):
-					pass
-					#N
+					chart[i,i+1][noun_node] = {}
+					chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
 				else:
-					pass
-					#name, uknown
+					a = math.random()
+					if a < 0.8:
+						chart[i,i+1][name_node] = {}
+						chart[i,i+1][name_node][s[i]] = chart_item(1.0, 0, False)
+					else:
+						chart[i,i+1][noun_node] = {}
+						chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
 			else:
-				pass
-				#name, uknown
+				a = math.random()
+				if a < 0.8:
+					chart[i,i+1][name_node] = {}
+					chart[i,i+1][name_node][s[i]] = chart_item(1.0, 0, False)
+				else:
+					chart[i,i+1][noun_node] = {}
+					chart[i,i+1][noun_node][s[i]] = chart_item(1.0, 0, False)
 
 		check_unaries(chart[i,i+1])
 		
