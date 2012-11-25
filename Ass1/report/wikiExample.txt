@@ -1,7 +1,0 @@
-	NP 	S 		S 			S 		
-		VP V 		VP 			VP 		
-			Det 	NP 					
-				N 					
-					P 		PP 		
-						Det 	NP 		
-							N

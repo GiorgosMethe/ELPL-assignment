@@ -64,7 +64,7 @@
 \begin{center}
 {\Large By:} \\ \vspace{0.2cm}
 {\Large Georgios Methenitis, 10407537} \\ \vspace{0.1cm}
-{\Large Marios Tzakris, 10407537}\\
+{\Large Marios Tzakris, 10406875}\\
 \end{center}
 
 
@@ -338,7 +338,7 @@ Our implementation of the CYK algorithm is well optimized and it is neither time
 \WHILE{$added$}
 \STATE{$added = false$}
 \FOR{{\bf ref\_node} $\in$ $chart[i][j]$}
-\FOR{{\bf node} $\in$ $RulesRL[ref\_node]$ \textbf{and} \textbf{node} $\notin$ $Chart[i][j]$ \textbf{and} \textbf{node}$=="TOP"$}
+\FOR{{\bf node} $\in$ $RulesRL[ref\_node]$ \textbf{and} \textbf{node} $\notin$ $Chart[i][j]$ \textbf{and} \textbf{node} \textbf{is} $"TOP"$}
 \STATE{$Chart[i][j].\textbf{add}(node)$}
 \STATE $added = true$
 \ENDFOR
@@ -357,26 +357,22 @@ the grammar. For example, assuming that we have the sentence:
 The productions \texttt{TOP $\rightarrow$ X P} that cover the whole sentence in the  entry $chart[0, n]$, after running our CYK parser on this sentence was:
 \begin{scriptsize}
 \begin{align*}
-\texttt{TOP} &\rightarrow \texttt{FRAG} \\
+\texttt{TOP} &\rightarrow \texttt{FRAG\%\%\%\%\%NP} \\
 \texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%ADVP} \\
 \texttt{TOP} &\rightarrow  \texttt{PP} \\
-\texttt{TOP} &\rightarrow  \texttt{NP\%\%\%\%\%S} \\
 \texttt{TOP} &\rightarrow  \texttt{SBAR} \\
 \texttt{TOP}  &\rightarrow \texttt{UCP} \\
 \texttt{TOP}  &\rightarrow \texttt{SINV} \\
 \texttt{TOP} &\rightarrow  \texttt{ADJP} \\
-\texttt{TOP} &\rightarrow  \texttt{SQ}\\
+\texttt{TOP}  &\rightarrow \texttt{S\%\%\%\%\%VP} \\
 \texttt{TOP} &\rightarrow  \texttt{PRN} \\
-\texttt{TOP} &\rightarrow  \texttt{SBARQ} \\
-\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%SBAR} \\
-\texttt{TOP}  &\rightarrow \texttt{ADVP} \\
 \texttt{TOP}  &\rightarrow \texttt{VP} \\
 \texttt{TOP} &\rightarrow  \texttt{S} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG} \\
 \texttt{TOP} &\rightarrow  \texttt{NP} \\
 \texttt{TOP}  &\rightarrow \texttt{X} \\
-\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%NP} \\
-\texttt{TOP}  &\rightarrow \texttt{S\%\%\%\%\%VP} \\
-\texttt{TOP}  &\rightarrow \texttt{X\%\%\%\%\%SBARQ} \\
+\texttt{TOP}  &\rightarrow \texttt{ADVP} \\
+\texttt{TOP} &\rightarrow  \texttt{SQ} \\
 \end{align*}
 
 \end{scriptsize}

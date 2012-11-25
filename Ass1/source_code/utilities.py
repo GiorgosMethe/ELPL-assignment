@@ -45,13 +45,16 @@ def read_pcfg(file_name):
 
 def most_likely_production(noTerminal,num):
 	most_likely = []
-	for key,value in rulesLR[noTerminal].iteritems():
-		most_likely.append(item(key,float(value)))
-		if len(most_likely) > num:
-			most_likely = sorted(most_likely, key=attrgetter('prob'))
-			most_likely.pop(0)
-	for n in  sorted(most_likely, key=attrgetter('prob'), reverse=True):
-		print n.rule, n.prob
+	if noTerminal in rulesLR:
+		for key,value in rulesLR[noTerminal].iteritems():
+			most_likely.append(item(key,float(value)))
+			if len(most_likely) > num:
+				most_likely = sorted(most_likely, key=attrgetter('prob'))
+				most_likely.pop(0)
+		for n in  sorted(most_likely, key=attrgetter('prob'), reverse=True):
+			print n.rule, n.prob
+	else:
+		print "non-terminal not found in grammar"
 
 def ambiguous():
 	ambiguous_words = []
@@ -65,4 +68,4 @@ def ambiguous():
 
 	for n in  sorted(ambiguous_words, key=attrgetter('num'), reverse=True):
 		if n.num > 4:
-			print n.ruleL," & ",n.ruleR," & ", "%0.6f" % float(n.prob)," \\\\"
+			print n.ruleL,"<-",n.ruleR,", probability:", "%0.6f" % float(n.prob)

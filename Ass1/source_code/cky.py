@@ -1,5 +1,5 @@
 import sys
-import math
+import random
 from collections import defaultdict
 
 """ Dictionary to hold the rules from the extracted pcfg
@@ -24,6 +24,9 @@ class chart_item():
     	self.prob = prob
         self.split = split
         self.unary = unary
+
+def update_progress(progress):
+    print '\r[{0}%'.format(progress),
 
 def read_pcfg(file_name):
 	"""Reads the grammar rules from the output of the pcfg
@@ -86,13 +89,13 @@ def handle_unknown_words(unknown_word):
 		unknown_word[(len(unknown_word)-3):(len(unknown_word))] == "ing"):
 			return noun_node
 		else:
-			a = math.random()
+			a = random.uniform(0, 1)
 			if a < 0.8:
 				return name_node
 			else:
 				return noun_node
 	else:
-		a = math.random()
+		a = random.uniform(0, 1)
 		if a < 0.8:
 			return name_node
 		else:
@@ -122,9 +125,23 @@ def iterate_sentences():
     """
 	i = 1
 	for s in sentences:
-		print "Sentence in line ", i, " is: "
-		cky_parsing(s)
+		print "Sentence in line ", i, " has these top productions: "
+		chart = cky_parsing(s)
+		print_top_productions(chart,len(s)+1)
 		i += 1
+
+def iterate_sentences_write(file_name):
+	"""iterates over all saved sentences and runs the cky parser
+	for each one of them
+    """
+	i = 1
+	print "Writing output...",file_name
+	for s in sentences:
+		print i
+		chart = cky_parsing(s)
+		write_top_productions(chart,len(s)+1,file_name,i)
+		i += 1
+	print "completed successfully"
 
 def check_unaries(chart):
 	"""iterates over all nodes inot the specified chart position
@@ -138,14 +155,15 @@ def check_unaries(chart):
 		for key, value in tempChart.iteritems():
 			if key in rulesRL:
 				for key1,value1 in rulesRL[key].iteritems():
-					if type(chart[key1]) != type({}):
-						chart[key1] = {}
-						chart[key1][key] = chart_item(value, 0, True)
-						added = True
-					else:
-						if not key in chart[key1]:
+					if key1 == start_node:
+						if type(chart[key1]) != type({}):
+							chart[key1] = {}
 							chart[key1][key] = chart_item(value, 0, True)
 							added = True
+						else:
+							if not key in chart[key1]:
+								chart[key1][key] = chart_item(value, 0, True)
+								added = True
 
 def cky_parsing(s):
 	"""cky parser from stanford slides
@@ -186,15 +204,23 @@ def cky_parsing(s):
 									if not s[i] in chart[begin,end][key]:
 										chart[begin,end][key][(x,y)] = chart_item(value, split, False)
 				check_unaries(chart[begin,end])
-	print_top_productions(chart,n)
+	return chart
 
 
 def print_top_productions(chart,n):
 	"""prints the top production in the upper right 
 	corner of the chart table
     """
-	for key,value in chart[0,n-2].iteritems():
+	for key,value in chart[0,n-1].iteritems():
 		if key == start_node:
-			for key1,value1 in chart[0,n-2][key].iteritems():
-				print key,"->",key1
-	
+			for key1,value1 in chart[0,n-1][key].iteritems():
+				print key,"->",key1,"\n",
+
+def write_top_productions(chart,n,file_name,line):
+	f = open(file_name, 'a')
+	f.write("Sentence in line "+str(line)+" has these top productions:\n")
+	for key,value in chart[0,n-1].iteritems():
+		if key == start_node:
+			for key1,value1 in chart[0,n-1][key].iteritems():
+				f.write(key+"->"+key1+"\n")
+	f.close()

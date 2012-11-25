@@ -5,9 +5,10 @@ import argparse
 import utilities
 
 help = {
-	'e':	'Generate a grammar from the passed treebank.',
-	'ps':	'CYK parser, takes a sentence as argument.',
-	'pf':	'CYK parser, takes a .',
+	'e':	'Generate a grammar from the passed treebank',
+	'ps':	'CYK parser, takes a sentence as argument',
+	'pf':	'CYK parser, takes a file of sentences and prints the top productions',
+	'pfw':	'CYK parser, takes a file of sentences and write a file of top productions',
 	's':	'Show grammar',
 	'm':	'Most likely productions',
 	'a':  'Ambiguous words'
@@ -15,10 +16,11 @@ help = {
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--treebank', nargs=2, help=help['e'])
 parser.add_argument('-s', '--s_grammar_file' , help=help['s'])
-parser.add_argument('-a', '--a_grammar_file' , help=help['s'])
+parser.add_argument('-a', '--a_grammar_file' , help=help['a'])
 parser.add_argument('-m', '--m_grammar_file',nargs = 2, help=help['m'])
 parser.add_argument('-ps', '--ps_grammar_file', nargs=2 , help=help['ps'])
 parser.add_argument('-pf', '--pf_grammar_file', nargs=2 , help=help['pf'])
+parser.add_argument('-pfw', '--pfw_grammar_file', nargs=3 , help=help['pfw'])
 args = parser.parse_args()
 
 # extract args
@@ -26,6 +28,11 @@ if args.pf_grammar_file:
 	cky.read_pcfg(args.pf_grammar_file[0])
 	cky.read_sentences(args.pf_grammar_file[1])
 	cky.iterate_sentences()
+
+if args.pfw_grammar_file:
+	cky.read_pcfg(args.pfw_grammar_file[0])
+	cky.read_sentences(args.pfw_grammar_file[1])
+	cky.iterate_sentences_write(args.pfw_grammar_file[2])
 
 if args.ps_grammar_file:
 	cky.read_pcfg(args.ps_grammar_file[0])
@@ -59,6 +66,7 @@ if args.treebank:
 
 if args.m_grammar_file:
 	utilities.read_pcfg(args.m_grammar_file[0])
+	# change the second argument to get different number of likely productions
 	utilities.most_likely_production(args.m_grammar_file[1],4)
 
 if args.a_grammar_file:
