@@ -120,7 +120,7 @@ def iterate_sentences():
 	"""iterates over all saved sentences and runs the cky parser
 	for each one of them
     """
-	i = 0
+	i = 1
 	for s in sentences:
 		print "Sentence in line ", i, " is: "
 		cky_parsing(s)
@@ -138,15 +138,14 @@ def check_unaries(chart):
 		for key, value in tempChart.iteritems():
 			if key in rulesRL:
 				for key1,value1 in rulesRL[key].iteritems():
-					if key1 == start_node:
-						if type(chart[key1]) != type({}):
-							chart[key1] = {}
+					if type(chart[key1]) != type({}):
+						chart[key1] = {}
+						chart[key1][key] = chart_item(value, 0, True)
+						added = True
+					else:
+						if not key in chart[key1]:
 							chart[key1][key] = chart_item(value, 0, True)
 							added = True
-						else:
-							if not key in chart[key1]:
-								chart[key1][key] = chart_item(value, 0, True)
-								added = True
 
 def cky_parsing(s):
 	"""cky parser from stanford slides
@@ -197,5 +196,5 @@ def print_top_productions(chart,n):
 	for key,value in chart[0,n-2].iteritems():
 		if key == start_node:
 			for key1,value1 in chart[0,n-2][key].iteritems():
-				print key,key1
+				print key,"->",key1
 	

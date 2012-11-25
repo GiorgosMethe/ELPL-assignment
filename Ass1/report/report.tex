@@ -328,13 +328,45 @@ As we have seen in the test sentences, there are plenty of words which were not 
 In this way, there are not unknown words anymore and every word can be assigned as a production of a non-terminal node. Is it obvious,that it is a very simplified way of recognize the type of a word, but we are sure that we are able to build a better system to recognize the type of unknown words, with a more stochastic way, and in respect to the training set.
 
 \subsection{Results}
+Our implementation of the CYK algorithm is well optimized and it is neither time or space consuming speaking about its complexity. For the time being, we have not deal with probabilities during the process of building the parse-forest. So, it is normal, that it the algorithm is not very fast due to the fact that it is constructing all possible trees that may have generate each sentence.
 
 \subsubsection{TOP Productions}
+The covering productions can be generated from an input sentence given
+the grammar. For example, assuming that we have the sentence:
+\begin{center}
+``\textit{No, it wasn't Black Monday.s}''
+\end{center}
+The productions \texttt{TOP $\rightarrow$ X P} that cover the whole sentence in the  entry $chart[0, n]$, after running our CYK parser on this sentence was:
+\begin{scriptsize}
+\begin{align*}
+\texttt{TOP} &\rightarrow \texttt{FRAG} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%ADVP} \\
+\texttt{TOP} &\rightarrow  \texttt{PP} \\
+\texttt{TOP} &\rightarrow  \texttt{NP\%\%\%\%\%S} \\
+\texttt{TOP} &\rightarrow  \texttt{SBAR} \\
+\texttt{TOP}  &\rightarrow \texttt{UCP} \\
+\texttt{TOP}  &\rightarrow \texttt{SINV} \\
+\texttt{TOP} &\rightarrow  \texttt{ADJP} \\
+\texttt{TOP} &\rightarrow  \texttt{SQ}\\
+\texttt{TOP} &\rightarrow  \texttt{PRN} \\
+\texttt{TOP} &\rightarrow  \texttt{SBARQ} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%SBAR} \\
+\texttt{TOP}  &\rightarrow \texttt{ADVP} \\
+\texttt{TOP}  &\rightarrow \texttt{VP} \\
+\texttt{TOP} &\rightarrow  \texttt{S} \\
+\texttt{TOP} &\rightarrow  \texttt{NP} \\
+\texttt{TOP}  &\rightarrow \texttt{X} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%NP} \\
+\texttt{TOP}  &\rightarrow \texttt{S\%\%\%\%\%VP} \\
+\texttt{TOP}  &\rightarrow \texttt{X\%\%\%\%\%SBARQ} \\
+\end{align*}
+
+\end{scriptsize}
 
 \section{Conclusion}
 \label{concl}
 In this report we have presented an simple but efficient way to extract the PCFG from a
-treebank data file. Our work makes use of the \textit{Python} dictionaries in order to store the rules of the grammar in efficient way in order to be used in the most optimized by the CYK algorithm which generates a parse forest for a sentence based on
-an existing grammar. Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data.
+treebank data file. Our implementation makes use of the \textit{Python} dictionaries in order to store the rules of the grammar in efficient way in order to be used in the most optimized by the CYK algorithm which generates a parse forest for a sentence based on
+an existing grammar. Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data. More information about the code itself, you can find in the readme file attached with our source code.
 
 \end{document}
