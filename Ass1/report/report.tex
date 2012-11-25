@@ -162,6 +162,85 @@ After running our parser in the complete training set, we got all rules, the fre
 00457       NP           ADVP NNS         6.53558462438e-06
 \end{verbatim}
 
+\subsubsection{Syntactically Ambiguous Words}
+To find find the syntactically ambiguous words we used every terminal word and count by how many non-terminal is been produced. Table~\ref{syn}, presents some of the most ambiguous syntactically words in out training data.
+\begin{table}[t!]
+\label{unknown}
+\caption{Syntactically Ambiguous Words}
+\label{syn}
+\begin{center}
+\begin{tiny}
+    \begin{tabular}{l l l}
+    \hline
+    \hline
+        \textbf{Word} & \textbf{Non-Terminal} & \textbf{Probability} \\ \hline
+down  &  RP  &  0.080391  \\
+  &  RB  &  0.011398  \\
+  &  NN  &  0.000008  \\
+  &  RBR  &  0.000566  \\
+  &  VBP  &  0.000080  \\
+  &  JJ  &  0.000163  \\
+  &  IN  &  0.001441  \vspace{0.1cm} \\
+that  &  NN  &  0.000008  \\
+  &  VBP  &  0.000080  \\
+  &  WDT  &  0.462273  \\
+  &  RB  &  0.000710  \\
+  &  IN  &  0.048856  \\
+  &  DT  &  0.014272  \vspace{0.1cm} \\
+'s  &  VBZ  &  0.056386  \\
+  &  PRP  &  0.000459  \\
+  &  NNS  &  0.000017  \\
+  &  POS  &  0.928514  \\
+  &  NNP  &  0.000011  \vspace{0.1cm} \\
+a  &  DT  &  0.235392  \\
+  &  FW  &  0.029915  \\
+  &  LS  &  0.027778  \\
+  &  SYM  &  0.172414  \\
+  &  NNP  &  0.000022  \\
+  \hline
+  \end{tabular}
+  \end{tiny}
+  \end{center}
+\end{table}
+
+\subsubsection{Most Likely Productions}
+To find the most likely productions for the set of non-terminals \{V P, S, NP, SBAR, PP\}, we store the dictionary in respect to the probability of each of those productions and print the four with the biggest probability. Table~\ref{most}, presents these results.
+\begin{table}[h!]
+\label{most}
+\caption{Most Likely Productions}
+\begin{center}
+\begin{scriptsize}
+    \begin{tabular}{l l l}
+    \hline
+    \hline
+    \textbf{Non-Terminal} & \textbf{Production} & \textbf{Probability} \\ \hline
+	NP & DT, NP@ & 0.1284 \\
+	&NP, PP &0.1111\\
+	&DT, NN &0.0958\\
+	&NP, NP@ &0.0888\vspace{0.1cm} \\
+	PP & IN, NP & 0.7963 \\
+	&TO, NP &0.0787\\
+	&IN, S\%\%\%\%\%VP &0.0263\\
+	&IN, NP\%\%\%\%\%QP& 0.0128\vspace{0.1cm} \\
+	SBAR & IN, S & 0.4537 \\
+	&WHNP, S\%\%\%\%\%VP& 0.2671\\
+	&WHADVP, S &0.0904\\
+	&WHNP, S &0.0665\vspace{0.1cm} \\
+	VP & VBD, VP@  &0.0767 \\
+	&VB, NP &0.0663\\
+	&VB, VP@& 0.0640\\
+	&MD, VP &0.0591\vspace{0.1cm} \\
+	S & NP, S@ & 0.3541 \\
+	&NP, VP& 0.3439 \\
+	&PP, S@ & 0.0715 \\
+	&S, S@& 0.0615 \\
+  \hline
+  \end{tabular}
+  \end{scriptsize}
+  \end{center}
+\end{table}
+
+
 \section{CYK Algorithm}
 \label{cyk}
 In computer science, the Cocke-Younger-Kasami (CYK) algorithm, is a parsing algorithm for context-free grammars. It employs bottom-up parsing and dynamic programming, considering all possible productions that can generate a sentence. In this algorithm, we want to fill a chart with non-terminal nodes in order to be able to consider all possible trees.
@@ -206,7 +285,7 @@ The CKY algorithm scans the words of the sentence attempting to add non-terminal
 \end{algorithm}
 
 \subsection{Implementation of the CYK Algorithm}
-Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, there are some differences to the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in python to store the nodes in every chart position. So, we don't iterate over all non-terminal nodes but only over the existing in each chart cell.
+Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, there are some differences to the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in python to store the nodes in every chart position. So, we don't iterate over all non-terminal nodes but only over the existing in each chart cell. In this algorithm the first $13$ lines of code is for initialization of the chart. In this part, we are looking for unary rules with productions each word of the sentence. If a word does not exist in our rules then we handle it differently and we are going to discuss it later in this report. After this step, we check every updated chart position for unaries that may exist. Algorithm~\ref{unaries}, presents the unary handling we have done. According to the algorithm in the \textit{Stanford} slides, we check all nodes in a chart position as productions from another rules and we add these non-terminals to the same chart position. This is done until there is no unary rule to be added.
 
 \begin{algorithm}[t!]
 \caption{Unaries Handling}
@@ -229,9 +308,33 @@ Algorithm~\ref{cky}, presents our algorithm in pseudo-code. As you can realize, 
 \end{small}
 \end{algorithm}
 
+\subsection{Unknown Words}
+As we have seen in the test sentences, there are plenty of words which were not able to associate themselves to a rule form the PCFG grammar. We have tried to with a simple way to associate them in a rule. The following Table~\ref{unknown}, illustrates this procedure with a few examples.
+\begin{table}[h!]
+\label{unknown}
+\begin{center}
+    \begin{tabular}{|l|l|l|l|}
+\hline
+        \textbf{Format} & \textbf{Examples} & \textbf{Type} & \textbf{Non-Terminal} \\
+		\hline
+        number, floats & 12.3, 12-3-2012 & numerical & CD \\ \hline
+        *ly, *y & fully, difficulty & adverb & ADV \\ \hline
+		*ing, *ion, *ist(s), *(e)s, *er(s) & criterion, linguistic & noun & N \\ \hline
+        *-*, *able, *ed & capable, drug-seeking & adjective &  ADJP  \\ \hline
+		else & ALFO, L.F & $noun^{p=0.2}$, $name^{p=0.8}$  & N, NNP \\ \hline
+    \end{tabular}
+\end{center}
+\end{table}
+In this way, there are not unknown words anymore and every word can be assigned as a production of a non-terminal node. Is it obvious,that it is a very simplified way of recognize the type of a word, but we are sure that we are able to build a better system to recognize the type of unknown words, with a more stochastic way, and in respect to the training set.
+
+\subsection{Results}
+
+\subsubsection{TOP Productions}
 
 \section{Conclusion}
 \label{concl}
-In this first two steps, we have seen....
+In this report we have presented an simple but efficient way to extract the PCFG from a
+treebank data file. Our work makes use of the \textit{Python} dictionaries in order to store the rules of the grammar in efficient way in order to be used in the most optimized by the CYK algorithm which generates a parse forest for a sentence based on
+an existing grammar. Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data.
 
 \end{document}

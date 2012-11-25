@@ -3,6 +3,10 @@
 \BOOKMARK [2][-]{subsection.2.1}{Stochastic/Probabilistic context-free grammar \(SCFG or PCFG\)}{section.2}% 3
 \BOOKMARK [2][-]{subsection.2.2}{Implementation of the PCFG parser}{section.2}% 4
 \BOOKMARK [2][-]{subsection.2.3}{Results}{section.2}% 5
-\BOOKMARK [1][-]{section.3}{CYK Algorithm}{}% 6
-\BOOKMARK [2][-]{subsection.3.1}{Implementation of the CYK Algorithm}{section.3}% 7
-\BOOKMARK [1][-]{section.4}{Conclusion}{}% 8
+\BOOKMARK [2][-]{subsection.2.4}{Syntactically Ambiguous Words}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Most Likely Productions}{section.2}% 7
+\BOOKMARK [1][-]{section.3}{CYK Algorithm}{}% 8
+\BOOKMARK [2][-]{subsection.3.1}{Implementation of the CYK Algorithm}{section.3}% 9
+\BOOKMARK [2][-]{subsection.3.2}{Unknown Words}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.3}{Results}{section.3}% 11
+\BOOKMARK [1][-]{section.4}{Conclusion}{}% 12
