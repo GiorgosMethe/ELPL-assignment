@@ -1,0 +1,386 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{layouts}
+\usepackage{array}
+\usepackage{pgf}
+\usepackage{tikz}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{eucal}
+\usepackage{ifthen}
+\usepackage{ifpdf}
+\usepackage{lmodern}
+\usepackage{amsthm}
+\usepackage{epstopdf}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usetikzlibrary{positioning}
+
+\hypersetup{
+  colorlinks,%
+    citecolor=blue,%
+    filecolor=blue,%
+    linkcolor=blue,%
+    urlcolor=mygreylink     % can put red here to visualize the links
+}
+
+\definecolor{hlcolor}{rgb}{1, 0, 0}
+\definecolor{mygrey}{gray}{.85}
+\definecolor{mygreylink}{gray}{.30}
+\textheight=8.6in
+\raggedbottom
+\addtolength{\oddsidemargin}{-0.375in}
+\addtolength{\evensidemargin}{0.375in}
+\addtolength{\textwidth}{0.5in}
+\addtolength{\topmargin}{-.375in}
+\addtolength{\textheight}{0.75in}
+
+\newcommand{\resheading}[1]{{\large \colorbox{mygrey}{\begin{minipage}{\textwidth}{\textbf{#1 \vphantom{p\^{E}}}}\end{minipage}}}}
+
+\newcommand{\mywebheader}{
+  \begin{tabular}{@{}p{5in}p{4in}}
+  {\resheading{Project 1: Statistical Parsing, Steps 1 \& 2}} & {\Large 25 November, 2012}\\\vspace{0.2cm}
+  \end{tabular}}
+
+\begin{document}
+
+
+\begin{center}
+{\Large University of Amsterdam}\\ \vspace{0.1cm}
+{\LARGE \textbf{Elements of Language Processing and Learning}}\\ [1em]
+\end{center}
+\mywebheader
+
+\begin{center}
+{\Large By:} \\ \vspace{0.2cm}
+{\Large Georgios Methenitis, 10407537} \\ \vspace{0.1cm}
+{\Large Marios Tzakris, 10406875}\\
+\end{center}
+
+
+
+
+
+
+\section{Introduction}
+In this project we implemented a prototype statistical parser. Having the given treebank data file we parsed and extracted the rules using this statistical parser (Step 1), resulting to a probabilistic context free grammar (PCFg). Then, given this extracted grammar, we implemented the Cocke-Younger-Kasami (CYK) algorithm, in order to parse some test sentences generating a parse-forest for each one of them. In Section~\ref{parser}, we are going to describe the implementation of our parser. In Section~\ref{cyk}, we are going to discuss about our implementation of the CYK algorithm as well as, our assumptions in respect to the unknown words, the unary rules, and a brief explanation of every step of this algorithm through pseudo-code and examples. Finally, section~\ref{concl}, serves as an epilogue to the first two steps of this project.
+
+
+
+
+
+\section{Statistical Parsing}
+\label{parser}
+Statistical parsing is a parsing method for natural language processing. The key idea behind this procedure, is the association between grammar rules from the linguistics point of view with probabilities for each one of them. Make it feasible for us, to be able to analyze, and compute the probability of a complete parse of a sentence. 
+
+
+
+
+
+
+\subsection{Stochastic/Probabilistic context-free grammar (SCFG or PCFG)}
+A probabilistic context-free grammar is a set of rules in which each production is augmented with a probability. Each rule is represented by the non-terminal left-hand side node, and the right-side node or nodes. In our particular data-set there are only binary and unary rules. A typical example of  binary rule is this: $X \rightarrow \alpha\	 \beta$. In general, in our treebanks there were mostly binary rules but in some cases we had to handle the unaries which have this form: $X \rightarrow \alpha$. Each rule has a probability and this probability is given by: $P(X \rightarrow \alpha | X)$, or $P(X \rightarrow \alpha \beta| X)$, for the above two examples of rules. So, we can derive that the likelihood of each rule is given by the frequency of the right hand nodes, given the left hand nodes of a rule. Assuming that, the frequency of each specific rule is denoted by $f_r$, the non-terminal nodes by, $N_i$, and finally the productions which are a sequence of one or more non-terminal or terminal nodes by, $n_i$, we have:
+\[
+P(N_i \rightarrow n_i | N_i) = \cfrac{f_r(n_i | N_i)}{\parallel N_i \parallel}
+\]
+, where $f_r(n_i | N_i)$, is the number of times that $n_i$ is produced by the non-terminal node $N_i$ during the training. In addition, $\parallel N_i \parallel$, is the number of production this non-terminal have.
+
+
+
+\subsection{Implementation of the PCFG parser}
+
+To parse the given treebank and extract the rules with their probabilities, we did not use a third-party parsing library, instead we built our own parsing algorithm. Given the treebank's form,
+\begin{verbatim}
+(TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
+\end{verbatim}
+we parse each tree of the training set, keeping nodes and a piece of informationabout the level of each node according to the parenthesis level. After this procedure our $Nodes\_Table$ (1) looks like this:
+\begin{table}[h!]
+\begin{scriptsize}
+\begin{center}
+\begin{tabular}{ r r }
+\texttt{TOP} 0         &      \texttt{VP} 3 \\
+\texttt{S} 1           &      \texttt{VBZ} 4   \\
+\texttt{NP} 2          &      \texttt{plays} 5     \\           
+\texttt{NNP} 3         &      \texttt{NP} 4\\
+\texttt{Ms}. 4          &     \texttt{NNP} 5     \\                     
+\texttt{NNP} 3         &      \texttt{Elianti} 6\\
+\texttt{Haag} 4        &      \texttt{.} 3\\
+\texttt{S@} 2          &      \texttt{.} 4
+\end{tabular}
+\end{center}
+\end{scriptsize}
+\end{table}
+\begin{algorithm}[t!]
+\caption{Rule Production}
+\label{rule}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$Nodes\_Table$ (1)
+\STATE {\bf Output: }$Rules$
+\STATE
+\FOR{{\bf i} $\in\ (0,\textbf{length}(Nodes\_Table)-1)$}
+\STATE $rightSide = \emptyset$
+\FOR{{\bf j} $\in\ (i+1,\textbf{length}(Nodes\_Table))$}
+\IF{$(Nodes\_Table[j].level-1 == Nodes\_Table[i].level)$}
+\IF{$(rightSide == \emptyset)$}
+\STATE{$rightSide \rightarrow Nodes\_Table[j].rule$}
+\ELSE
+\STATE{$rightSide \rightarrow rule,Nodes\_Table[j].rule$}
+\ENDIF
+\ENDIF
+\IF{$(j == \textbf{lenth}(Nodes\_Table)-1\ \textbf{or}\ Nodes\_Table[j].level == Nodes\_Table[i].level)$}
+\IF{$(rightSide == \emptyset)$}
+\STATE{$ \textbf{save\_rule}(Rule(Nodes\_Table[i].rule,rightSide))$}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
+After the generation of the $Nodes\_Table$, it is time to generate the rules derived from this tree. Algorithm~\ref{rule}, presents in pseudo-code this procedure. This algorithm starts from each node heading towards the end of this list until it comes along with a node of the same level or with the end. In this process if there is a node with level one more than the current node, this node automatically infers that it is its child. The resulted rules derived by the above example sentence are following:
+\begin{table}[h!]
+\begin{scriptsize}
+\begin{center}
+\begin{tabular}{ l l }
+$\texttt{TOP} \rightarrow\ \texttt{S}$ & $\texttt{VP} \rightarrow \texttt{VBZ NP}$ \\
+$\texttt{S} \rightarrow \texttt{NP S@}$ & $\texttt{VBZ} \rightarrow \texttt{plays}$ \\
+$\texttt{NP} \rightarrow \texttt{NNP NNP}$ & $\texttt{NP} \rightarrow \texttt{NNP}$ \\
+$\texttt{NNP} \rightarrow \texttt{Ms.}$ & $\texttt{NNP} \rightarrow \texttt{Elianti}$ \\
+$\texttt{NNP} \rightarrow \texttt{Haag}$ & $\texttt{S@} \rightarrow \texttt{VP .}$  \\
+$\texttt{.} 	\rightarrow \texttt{.}$ & $ $
+\end{tabular}
+\end{center}
+\end{scriptsize}
+\end{table}
+
+\subsection{Results}
+After running our parser in the complete training set, we got all rules, the frequency for every production of each rule, and the number of appearances for every non-terminal node. From this data, we extracted the complete PCFG grammar from the training set in a file with the following form:
+\begin{verbatim}
+<id>   <Non-Terminal>   <Production>        <Probability>
+00000       TOP          FRAG%%%%%NP      0.000225954658432 
+00457       NP           ADVP NNS         6.53558462438e-06
+\end{verbatim}
+
+\subsubsection{Syntactically Ambiguous Words}
+To find the syntactically ambiguous words we used every terminal word and count by how many non-terminal is been produced. Table~\ref{syn}, presents some of the most ambiguous syntactically words in our training data.
+\begin{table}[t!]
+\label{unknown}
+\caption{Syntactically Ambiguous Words}
+\label{syn}
+\begin{center}
+\begin{tiny}
+    \begin{tabular}{l l c}
+    \hline
+    \hline
+        \textbf{Word} & \textbf{Non-Terminal} & \textbf{Probability} \\ \hline
+down  &  RP  &  0.080391  \\
+  &  RB  &  0.011398  \\
+  &  NN  &  0.000008  \\
+  &  RBR  &  0.000566  \\
+  &  VBP  &  0.000080  \\
+  &  JJ  &  0.000163  \\
+  &  IN  &  0.001441  \vspace{0.1cm} \\
+that  &  NN  &  0.000008  \\
+  &  VBP  &  0.000080  \\
+  &  WDT  &  0.462273  \\
+  &  RB  &  0.000710  \\
+  &  IN  &  0.048856  \\
+  &  DT  &  0.014272  \vspace{0.1cm} \\
+'s  &  VBZ  &  0.056386  \\
+  &  PRP  &  0.000459  \\
+  &  NNS  &  0.000017  \\
+  &  POS  &  0.928514  \\
+  &  NNP  &  0.000011  \vspace{0.1cm} \\
+a  &  DT  &  0.235392  \\
+  &  FW  &  0.029915  \\
+  &  LS  &  0.027778  \\
+  &  SYM  &  0.172414  \\
+  &  NNP  &  0.000022  \\
+  \hline
+  \end{tabular}
+  \end{tiny}
+  \end{center}
+\end{table}
+
+\subsubsection{Most Likely Productions}
+In addition, to compute the most likely productions for the set of non-terminals \{V P, S, NP, SBAR, PP\}, we sort the dictionary in respect to the probability of each of those productions and print the four with the biggest probability. Table~\ref{most}, presents these results.
+\begin{table}[h!]
+\caption{Most Likely Productions}
+\label{most}
+\begin{center}
+\begin{scriptsize}
+    \begin{tabular}{l l c}
+    \hline
+    \hline
+    \textbf{Non-Terminal} & \textbf{Production} & \textbf{Probability} \\ \hline
+	NP & DT, NP@ & 0.1284 \\
+	&NP, PP &0.1111\\
+	&DT, NN &0.0958\\
+	&NP, NP@ &0.0888\vspace{0.1cm} \\
+	PP & IN, NP & 0.7963 \\
+	&TO, NP &0.0787\\
+	&IN, S\%\%\%\%\%VP &0.0263\\
+	&IN, NP\%\%\%\%\%QP& 0.0128\vspace{0.1cm} \\
+	SBAR & IN, S & 0.4537 \\
+	&WHNP, S\%\%\%\%\%VP& 0.2671\\
+	&WHADVP, S &0.0904\\
+	&WHNP, S &0.0665\vspace{0.1cm} \\
+	VP & VBD, VP@  &0.0767 \\
+	&VB, NP &0.0663\\
+	&VB, VP@& 0.0640\\
+	&MD, VP &0.0591\vspace{0.1cm} \\
+	S & NP, S@ & 0.3541 \\
+	&NP, VP& 0.3439 \\
+	&PP, S@ & 0.0715 \\
+	&S, S@& 0.0615 \\
+  \hline
+  \end{tabular}
+  \end{scriptsize}
+  \end{center}
+\end{table}
+
+
+\section{CYK Algorithm}
+\label{cyk}
+In computer science, the Cocke-Younger-Kasami (CYK) algorithm, is a parsing algorithm for context-free grammars. It employs bottom-up parsing and dynamic programming, considering all possible productions that can generate a sentence. In this algorithm, we want to fill a chart with non-terminal nodes in order to be able to produce all possible trees. The CYK algorithm scans the words of the sentence attempting to add non-terminal nodes to its chart. For each production of a non-terminal node that is matched from the PCFG grammar we add this left side node to the chart. To improve its performance we didn't iterate on all possible non-terminal nodes, instead we have used a dictionary to index every node added to the chart.
+
+\begin{algorithm}[t!]
+\caption{CYK Algorithm}
+\label{CYK}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$RulesRL[]$, $Sentence\ S[]$
+\STATE {\#$RulesRL$}, is a dictionary in which for every production $p$, gives $RulesRL[p]$ non-terminal nodes which have this production.
+\STATE {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$
+\STATE
+\STATE {\# Chart initialization}
+\FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
+\IF{$S[i]$ $\notin$ $RulesRL[]$}
+\STATE{$\textbf{handle\_unknown\_word}(S[i])$}
+\ELSE
+\FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
+\STATE{$Chart[i][i+1].\textbf{add}(node)$}
+\ENDFOR
+\ENDIF
+\STATE{$\textbf{check\_unaries}(Chart[i][i+1])$}
+\ENDFOR
+\STATE
+\STATE {\# Fill productions in chart}
+\STATE $n = \textbf{length}(S) + 1$
+\FOR{{\bf span} $\in$ (2,n)}
+\FOR{{\bf begin} $\in$ (0,n-span)}
+\STATE $end = begin + span$
+\FOR{{\bf split} $\in$ (begin,end)}
+\FOR{{\bf nodeL} $\in$ $chart[begin][split]$}
+\FOR{{\bf nodeR} $\in$ $chart[split][end]$}
+\FOR{{\bf node} $\in$ $RulesRL[nodeL,nodeR]$ \textbf{and} \textbf{node} $\notin$ $Chart[begin][end]$}
+\STATE{$Chart[begin][end].\textbf{add}(node)$}
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\STATE{$\textbf{check\_unaries}(Chart[begin][end])$}
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
+
+
+\subsection{Implementation of the CYK Algorithm}
+
+Algorithm~\ref{CYK}, presents our implementation of the CYK algorithm in pseudo-code. As you can realize, there are some differences to the algorithm as it is described in the \textit{Stanford} slides. This happens because we make use of the dictionaries in \textit{Python} to store the nodes in every chart position. So, we don't iterate over all non-terminal nodes but only over the existing in each chart cell. In this algorithm the first $15$ lines of code is for initialization of the chart. In this part, we are looking for unary rules with productions each word of the sentence. If a word does not exist in our rules then we handle it differently. We are going to discuss this later in this report. Then and after this step, we check every updated chart position for unaries that may exist. Algorithm~\ref{unaries}, presents the unary handling we have done. According to the algorithm in the \textit{Stanford} slides, we check all nodes in a chart position as productions from another rules and we add these non-terminals to the same chart position. This is done until there is no unary rule to be added.
+
+
+\subsection{Unknown Words}
+As we have seen in the test sentences, there are plenty of words which were not able to associate their-selves to a rule from the PCFG grammar. We have tried to deal with it with a simple approach, associating each one of them with a rule. The following Table~\ref{unknown}, illustrates this procedure with a few examples.
+\begin{table}[h!]
+\label{unknown}
+\begin{center}
+    \begin{tabular}{|l|l|l|l|}
+\hline
+        \textbf{Format} & \textbf{Examples} & \textbf{Type} & \textbf{Non-Terminal} \\
+		\hline
+        number, floats & 12.3, 12-3-2012 & numerical & CD \\ \hline
+        *ly, *y & fully, difficulty & adverb & ADV \\ \hline
+		*ing, *ion, *ist(s), *(e)s, *er(s) & criterion, linguistic & noun & N \\ \hline
+        *-*, *able, *ed & capable, drug-seeking & adjective &  ADJP  \\ \hline
+		else & ALFO, L.F & $noun^{p=0.2}$, $name^{p=0.8}$  & N, NNP \\ \hline
+    \end{tabular}
+\end{center}
+\end{table}
+In this way, there are not unknown words anymore and every word can be assigned as a production of a non-terminal node. Is it obvious,that it is a very simplified way of recognize the type of a word, but we are sure that we are able to build a better system to recognize the type of unknown words, with a more stochastic way, and in respect to the training set.
+
+\subsection{Results}
+Our implementation of the CYK algorithm is well optimized and it is neither time or space consuming, speaking about its complexity. For the time being, we have not deal with probabilities during the process of building the parse-forest. So, it is normal, that it the algorithm is not very fast due to the fact that it is constructing all possible trees that may have generate each sentence.
+
+\begin{algorithm}[t!]
+\caption{Unaries Handling}
+\label{unaries}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$Chart[i][j]$
+\STATE {\bf Output: }Updated $Chart[i][j]$
+\STATE{$added = true$}
+\WHILE{$added$}
+\STATE{$added = false$}
+\FOR{{\bf ref\_node} $\in$ $chart[i][j]$}
+\FOR{{\bf node} $\in$ $RulesRL[ref\_node]$ \textbf{and} \textbf{node} $\notin$ $Chart[i][j]$ \textbf{and} \textbf{node} \textbf{is} $"TOP"$}
+\STATE{$Chart[i][j].\textbf{add}(node)$}
+\STATE $added = true$
+\ENDFOR
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
+\subsubsection{TOP Productions}
+The covering productions can be generated from an input sentence given
+the grammar. For example, assuming that we have the sentence:
+\begin{center}
+``\textit{No, it wasn't Black Monday.s}''
+\end{center}
+The productions \texttt{TOP $\rightarrow$ X P} that cover the whole sentence in the  entry $chart[0, n]$, after running our CYK parser on this sentence was:
+\begin{scriptsize}
+\begin{align*}
+\texttt{TOP} &\rightarrow \texttt{FRAG\%\%\%\%\%NP} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG\%\%\%\%\%ADVP} \\
+\texttt{TOP} &\rightarrow  \texttt{PP} \\
+\texttt{TOP} &\rightarrow  \texttt{SBAR} \\
+\texttt{TOP}  &\rightarrow \texttt{UCP} \\
+\texttt{TOP}  &\rightarrow \texttt{SINV} \\
+\texttt{TOP} &\rightarrow  \texttt{ADJP} \\
+\texttt{TOP}  &\rightarrow \texttt{S\%\%\%\%\%VP} \\
+\texttt{TOP} &\rightarrow  \texttt{PRN} \\
+\texttt{TOP}  &\rightarrow \texttt{VP} \\
+\texttt{TOP} &\rightarrow  \texttt{S} \\
+\texttt{TOP} &\rightarrow  \texttt{FRAG} \\
+\texttt{TOP} &\rightarrow  \texttt{NP} \\
+\texttt{TOP}  &\rightarrow \texttt{X} \\
+\texttt{TOP}  &\rightarrow \texttt{ADVP} \\
+\texttt{TOP} &\rightarrow  \texttt{SQ} \\
+\end{align*}
+
+\end{scriptsize}
+
+\section{Conclusion}
+\label{concl}
+In this report we have presented a simple but efficient way to extract the PCFG from a
+treebank data file. Our implementation makes use of the \textit{Python} dictionaries in order to store the rules of the grammar efficiently in order to be used in the most optimized way by the CYK algorithm which generates a parse forest for a sentence based on an existing grammar.
+ Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data. More information about the code itself, you can find in the \texttt{readme} file attached with our source code.
+
+\end{document}
