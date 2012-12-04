@@ -54,7 +54,7 @@ def read_sentences(file_name):
 		items = line.split(" ")
 		temp = []
 		for item in items:
-			if item == '':
+			if item == '' or item == '\n':
 				break
 			temp.append(item)
 		sentences.append(temp)
@@ -116,7 +116,7 @@ def read_sentences_input(sentence):
 	items = sentence.split(" ")
 	temp = []
 	for item in items:
-		if item == '':
+		if item == '' or item == '\n':
 			break
 		temp.append(item)
 	sentences.append(temp)
@@ -129,6 +129,7 @@ def iterate_sentences():
 	for s in sentences:
 		print "Sentence in line ", i, " has these top productions: "
 		chart = cky_parsing(s)
+		print s
 		viterbi(chart,0,len(s),start_node)
 		i += 1
 
