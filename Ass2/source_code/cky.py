@@ -224,7 +224,8 @@ def print_top_productions(chart,n):
 # (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
 
 def viterbi(chart,x,y,node,words,lvl):
-	print node,lvl
+	print "(",
+	print node,
 	if node in chart[x,y]:
 		max_prob = float(-1)
 		for key,value in chart[x,y][node].iteritems():
@@ -233,23 +234,24 @@ def viterbi(chart,x,y,node,words,lvl):
 				max_node = key
 				max_item = value
 		if max_node == node:
-			print node,lvl+1
+			print node,")",
+			return
+		elif max_node in words:
+			print max_node,
 			return
 		if max_item.unary:
 			viterbi(chart,x,y,max_node,words,lvl+1)
+			print ")",
 			return
 		else:
    	 		Thread(target = viterbi(chart,x,max_item.split,max_node[0],words,lvl+1)).start()
+   	 		print ")",
     		Thread(target = viterbi(chart,max_item.split,y,max_node[1],words,lvl+1)).start()
+    		print ")",
     		return
 	else:
 		return
 
-
-
-
-
-		
 
 def write_top_productions(chart,n,file_name,line):
 	f = open(file_name, 'a')
