@@ -17,6 +17,7 @@ adverb_node = "ADV"
 name_node = "NNP"
 noun_node = "N"
 adjective_node = "ADJP"
+treebank = ""
 
 """Holds information about each rule in every chart_item
 position
@@ -129,8 +130,8 @@ def iterate_sentences():
 	for s in sentences:
 		print "Sentence in line ", i, " has these top productions: "
 		chart = cky_parsing(s)
-		print s
-		viterbi(chart,0,len(s),start_node)
+		viterbi(chart,0,len(s),start_node,s,0)
+		print treebank
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -220,7 +221,10 @@ def print_top_productions(chart,n):
 			for key1,value1 in chart[0,n-1][key].iteritems():
 				print key,"->",key1,"\n",
 
-def viterbi(chart,x,y,node):
+# (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
+
+def viterbi(chart,x,y,node,words,lvl):
+	print node,lvl
 	if node in chart[x,y]:
 		max_prob = float(-1)
 		for key,value in chart[x,y][node].iteritems():
@@ -228,15 +232,15 @@ def viterbi(chart,x,y,node):
 				max_prob = value.prob
 				max_node = key
 				max_item = value
-		print node,max_node
 		if max_node == node:
+			print node,lvl+1
 			return
 		if max_item.unary:
-			viterbi(chart,x,y,max_node)
+			viterbi(chart,x,y,max_node,words,lvl+1)
 			return
 		else:
-   	 		Thread(target = viterbi(chart,x,max_item.split,max_node[0])).start()
-    		Thread(target = viterbi(chart,max_item.split,y,max_node[1])).start()
+   	 		Thread(target = viterbi(chart,x,max_item.split,max_node[0],words,lvl+1)).start()
+    		Thread(target = viterbi(chart,max_item.split,y,max_node[1],words,lvl+1)).start()
     		return
 	else:
 		return
