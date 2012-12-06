@@ -18,10 +18,17 @@ name_node = "NNP"
 noun_node = "N"
 adjective_node = "ADJP"
 treebank = ""
+nodes = []
 
 """Holds information about each rule in every chart_item
 position
 """
+class tree_node():
+    def __init__(self, node, lvl, terminal):
+    	self.node = node
+        self.lvl = lvl
+        self.terminal = terminal
+
 class chart_item():
     def __init__(self, prob, split, unary):
     	self.prob = prob
@@ -131,7 +138,8 @@ def iterate_sentences():
 		print "Sentence in line ", i, " has these top productions: "
 		chart = cky_parsing(s)
 		viterbi(chart,0,len(s),start_node,s,0)
-		print treebank
+		tree = []
+		build_tree(nodes,s)
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -221,11 +229,32 @@ def print_top_productions(chart,n):
 			for key1,value1 in chart[0,n-1][key].iteritems():
 				print key,"->",key1,"\n",
 
-# (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
+def build_tree(nodes,words):
+	level = 0
+	for item in nodes:
+		if item.lvl > level:
+			level = item.lvl
+		else:
+			for i in range((level - item.lvl)):
+				print ")",
+				level -=1
+		if item.node in words:
+			print item.node,
+		else:
+			if item.terminal == False:
+				print "(",
+			print item.node,
+	for i in range(level+1):
+				print ")",
 
+
+# (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
 def viterbi(chart,x,y,node,words,lvl):
-	print "(",
-	print node,
+
+	if "@" in node:
+		lvl -= 1
+	else:
+		nodes.append(tree_node(node,lvl,False))
 	if node in chart[x,y]:
 		max_prob = float(-1)
 		for key,value in chart[x,y][node].iteritems():
@@ -234,20 +263,17 @@ def viterbi(chart,x,y,node,words,lvl):
 				max_node = key
 				max_item = value
 		if max_node == node:
-			print node,")",
+			nodes.append(tree_node(max_node,lvl+1,False))
 			return
 		elif max_node in words:
-			print max_node,
+			nodes.append(tree_node(max_node,lvl+1,True))
 			return
 		if max_item.unary:
 			viterbi(chart,x,y,max_node,words,lvl+1)
-			print ")",
 			return
 		else:
    	 		Thread(target = viterbi(chart,x,max_item.split,max_node[0],words,lvl+1)).start()
-   	 		print ")",
     		Thread(target = viterbi(chart,max_item.split,y,max_node[1],words,lvl+1)).start()
-    		print ")",
     		return
 	else:
 		return
