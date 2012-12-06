@@ -139,7 +139,8 @@ def iterate_sentences():
 		chart = cky_parsing(s)
 		viterbi(chart,0,len(s),start_node,s,0)
 		tree = []
-		build_tree(nodes,s)
+		tree_bank = build_tree(nodes,s)
+		print tree_bank
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -230,22 +231,25 @@ def print_top_productions(chart,n):
 				print key,"->",key1,"\n",
 
 def build_tree(nodes,words):
-	level = 0
-	for item in nodes:
-		if item.lvl > level:
-			level = item.lvl
+	tree_bank = ""
+	level = -1
+	i = 0
+	while i != len(nodes):
+		if nodes[i].lvl < level:
+				for w in range(level-nodes[i].lvl):
+					tree_bank += " ) "
+					level -= 1
+		if nodes[i+1].terminal == True:
+			tree_bank += " ( " + str(nodes[i].node) + " " + str(nodes[i+1].node) + " ) "
+			level = nodes[i].lvl
+			i +=1
 		else:
-			for i in range((level - item.lvl)):
-				print ")",
-				level -=1
-		if item.node in words:
-			print item.node,
-		else:
-			if item.terminal == False:
-				print "(",
-			print item.node,
-	for i in range(level+1):
-				print ")",
+			tree_bank += " ( " + str(nodes[i].node)
+			level = nodes[i].lvl
+		i += 1
+	for i in range(level):
+		tree_bank += " ) "
+	return tree_bank
 
 
 # (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
@@ -262,10 +266,7 @@ def viterbi(chart,x,y,node,words,lvl):
 				max_prob = value.prob
 				max_node = key
 				max_item = value
-		if max_node == node:
-			nodes.append(tree_node(max_node,lvl+1,False))
-			return
-		elif max_node in words:
+		if max_node == node or max_node in words:
 			nodes.append(tree_node(max_node,lvl+1,True))
 			return
 		if max_item.unary:
