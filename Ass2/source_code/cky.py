@@ -12,6 +12,8 @@ rulesRL = defaultdict(set)
 sentences = []
 start_node = "TOP"
 unknown_node = "@UNKNOWN"
+binary_node = "@"
+unary_node = "%%%%%"
 numeral_node = "CD"
 adverb_node = "ADV"
 name_node = "NNP"
@@ -138,9 +140,9 @@ def iterate_sentences():
 		print "Sentence in line ", i, " has these top productions: "
 		chart = cky_parsing(s)
 		viterbi(chart,0,len(s),start_node,s,0)
-		tree = []
 		tree_bank = build_tree(nodes,s)
 		print tree_bank
+		del nodes[:]
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -255,10 +257,16 @@ def build_tree(nodes,words):
 # (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
 def viterbi(chart,x,y,node,words,lvl):
 
-	if "@" in node:
+	if binary_node in node:
 		lvl -= 1
 	else:
-		nodes.append(tree_node(node,lvl,False))
+		if unary_node in node:
+			temp = node.split(unary_node)
+			nodes.append(tree_node(temp[0],lvl,False))
+			nodes.append(tree_node(temp[1],lvl+1,False))
+			lvl += 1
+		else:
+			nodes.append(tree_node(node,lvl,False))
 	if node in chart[x,y]:
 		max_prob = float(-1)
 		for key,value in chart[x,y][node].iteritems():
