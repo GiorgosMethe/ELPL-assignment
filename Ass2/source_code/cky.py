@@ -1,8 +1,7 @@
 import sys
 import random
+import viterbi
 from collections import defaultdict
-import threading
-from threading import Thread
 
 """ Dictionary to hold the rules from the extracted pcfg
 Binary rules are held like:
@@ -12,24 +11,16 @@ rulesRL = defaultdict(set)
 sentences = []
 start_node = "TOP"
 unknown_node = "@UNKNOWN"
-binary_node = "@"
-unary_node = "%%%%%"
 numeral_node = "CD"
 adverb_node = "ADV"
 name_node = "NNP"
 noun_node = "N"
 adjective_node = "ADJP"
 treebank = ""
-nodes = []
 
 """Holds information about each rule in every chart_item
 position
 """
-class tree_node():
-    def __init__(self, node, lvl, terminal):
-    	self.node = node
-        self.lvl = lvl
-        self.terminal = terminal
 
 class chart_item():
     def __init__(self, prob, split, unary):
@@ -139,10 +130,8 @@ def iterate_sentences():
 	for s in sentences:
 		print "Sentence in line ", i, " has these top productions: "
 		chart = cky_parsing(s)
-		viterbi(chart,0,len(s),start_node,s,0)
-		tree_bank = build_tree(nodes,s)
-		print tree_bank
-		del nodes[:]
+		viterbi.run(chart,0,len(s),start_node,s,0)
+		viterbi.build_tree(s)
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -231,62 +220,6 @@ def print_top_productions(chart,n):
 		if key == start_node:
 			for key1,value1 in chart[0,n-1][key].iteritems():
 				print key,"->",key1,"\n",
-
-def build_tree(nodes,words):
-	tree_bank = ""
-	level = -1
-	i = 0
-	while i != len(nodes):
-		if nodes[i].lvl < level:
-				for w in range(level-nodes[i].lvl):
-					tree_bank += " ) "
-					level -= 1
-		if nodes[i+1].terminal == True:
-			tree_bank += " ( " + str(nodes[i].node) + " " + str(nodes[i+1].node) + " ) "
-			level = nodes[i].lvl
-			i +=1
-		else:
-			tree_bank += " ( " + str(nodes[i].node)
-			level = nodes[i].lvl
-		i += 1
-	for i in range(level):
-		tree_bank += " ) "
-	return tree_bank
-
-
-# (TOP (S (NP (NNP Ms.) (NNP Haag)) (S@ (VP (VBZ plays) (NP (NNP Elianti))) (. .))) )
-def viterbi(chart,x,y,node,words,lvl):
-
-	if binary_node in node:
-		lvl -= 1
-	else:
-		if unary_node in node:
-			temp = node.split(unary_node)
-			nodes.append(tree_node(temp[0],lvl,False))
-			nodes.append(tree_node(temp[1],lvl+1,False))
-			lvl += 1
-		else:
-			nodes.append(tree_node(node,lvl,False))
-	if node in chart[x,y]:
-		max_prob = float(-1)
-		for key,value in chart[x,y][node].iteritems():
-			if value.prob > max_prob:
-				max_prob = value.prob
-				max_node = key
-				max_item = value
-		if max_node == node or max_node in words:
-			nodes.append(tree_node(max_node,lvl+1,True))
-			return
-		if max_item.unary:
-			viterbi(chart,x,y,max_node,words,lvl+1)
-			return
-		else:
-   	 		Thread(target = viterbi(chart,x,max_item.split,max_node[0],words,lvl+1)).start()
-    		Thread(target = viterbi(chart,max_item.split,y,max_node[1],words,lvl+1)).start()
-    		return
-	else:
-		return
-
 
 def write_top_productions(chart,n,file_name,line):
 	f = open(file_name, 'a')
