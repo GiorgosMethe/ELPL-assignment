@@ -23,7 +23,8 @@ position
 """
 
 class chart_item():
-    def __init__(self, prob, split, unary):
+    def __init__(self, child, prob, split, unary):
+    	self.child = child
     	self.prob = prob
         self.split = split
         self.unary = unary
@@ -129,8 +130,9 @@ def iterate_sentences():
 	i = 1
 	for s in sentences:
 		print "Sentence in line ", i, " has these top productions: "
-		chart = cky_parsing(s)
-		viterbi.run(chart,0,len(s),start_node,s,0)
+		if len(s) <= 15:
+			chart = cky_parsing(s)
+		 	viterbi.run(chart,0,len(s),start_node,s,0)
 		viterbi.build_tree(s)
 		i += 1
 
@@ -159,16 +161,12 @@ def check_unaries(chart):
 		for key, value in tempChart.iteritems():
 			if key in rulesRL:
 				for key1,value1 in rulesRL[key].iteritems():
-					if key1 == start_node:
-						if type(chart[key1]) != type({}):
-							chart[key1] = {}
-							chart[key1][key] = chart_item(float(value1), 0, True)
-							added = True
-						else:
-							if not key in chart[key1]:
-								chart[key1][key] = chart_item(float(value1), 0, True)
-								added = True
-			tempChart = chart.copy()
+					if key1 in chart:
+						if value1 > chart[key1].prob:
+							chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+					else:
+						chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+		tempChart = chart.copy()
 
 def cky_parsing(s):
 	"""cky parser from stanford slides
@@ -179,35 +177,31 @@ def cky_parsing(s):
 		chart[i,i+1] = defaultdict(set)
 		if s[i] in rulesRL:
 			for key, value in rulesRL[s[i]].iteritems():
-				if type(chart[i,i+1][key]) != type({}):
-					chart[i,i+1][key] = {}
-					chart[i,i+1][key][s[i]] = chart_item(float(value), 0, True)
+				if key in chart[i,i+1]:
+					chart[i,i+1][key] = chart_item(s[i], float(value), 0, True)
 				else:
-					if not s[i] in chart[i,i+1][key]:
-						chart[i,i+1][key][s[i]] = chart_item(float(value), 0, True)
+					chart[i,i+1][key] = chart_item(s[i], float(value), 0, True)
 		else:
 			most_probable = handle_unknown_words(s[i])
-			chart[i,i+1][most_probable] = {}
-			chart[i,i+1][most_probable][s[i]] = chart_item(float(1.0), 0, True)
-
+			chart[i,i+1][most_probable] = chart_item(s[i], float(1.0), 0, True)
 		check_unaries(chart[i,i+1])
-		
+
 	n = len(s)+1
 	for span in range(2,n):
 		for begin in range(n-span):
 			end = begin + span
 			chart[begin,end] = defaultdict(set)
 			for split in range(begin+1,end):
-				for x in chart[begin,split]:
-					for y in chart[split,end]:
+				for x, valuex in chart[begin,split].iteritems():
+					for y, valuey in chart[split,end].iteritems():
 						if (x,y) in rulesRL:
 							for key, value in rulesRL[(x,y)].iteritems():
-								if type(chart[begin,end][key]) != type({}):
-									chart[begin,end][key] = {}
-									chart[begin,end][key][(x,y)] = chart_item(float(value), split, False)
+								probability = float(value) * valuex.prob * valuey.prob
+								if key in chart[begin,end]:
+									if probability > chart[begin,end][key].prob:
+										chart[begin,end][key] = chart_item((x,y), probability, split, False)
 								else:
-									if not (x,y) in chart[begin,end][key]:
-										chart[begin,end][key][(x,y)] = chart_item(float(value), split, False)
+									chart[begin,end][key] = chart_item((x,y), probability, split, False)
 				check_unaries(chart[begin,end])
 	return chart
 
@@ -226,6 +220,5 @@ def write_top_productions(chart,n,file_name,line):
 	f.write("Sentence in line "+str(line)+" has these top productions:\n")
 	for key,value in chart[0,n-1].iteritems():
 		if key == start_node:
-			for key1,value1 in chart[0,n-1][key].iteritems():
-				f.write(key+"->"+key1+"\n")
+			f.write(key+"->"+value.child+"\n")
 	f.close()
