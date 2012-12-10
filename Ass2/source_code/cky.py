@@ -162,11 +162,33 @@ def check_unaries(chart):
 			if key in rulesRL:
 				for key1,value1 in rulesRL[key].iteritems():
 					if key1 in chart:
-						if value1 > chart[key1].prob:
+						if (value.prob * float(value1)) > chart[key1].prob:
 							chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+							added = True
 					else:
 						chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+						added = True
+
+def check_unaries_d(chart,word):
+	"""iterates over all nodes inot the specified chart position
+	and looks for unaries
+	Output: adds the unary rules to the specified chart position
+    """
+	added = True
+	while added == True:
+		added = False
 		tempChart = chart.copy()
+		for key, value in tempChart.iteritems():
+			if key in rulesRL:
+				for key1,value1 in rulesRL[key].iteritems():
+					if key1 in chart:
+						if chart[key1].child != word:
+							if (value.prob * float(value1)) > chart[key1].prob:
+								chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+								added = True
+					else:
+						chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
+						added = True
 
 def cky_parsing(s):
 	"""cky parser from stanford slides
@@ -177,14 +199,11 @@ def cky_parsing(s):
 		chart[i,i+1] = defaultdict(set)
 		if s[i] in rulesRL:
 			for key, value in rulesRL[s[i]].iteritems():
-				if key in chart[i,i+1]:
-					chart[i,i+1][key] = chart_item(s[i], float(value), 0, True)
-				else:
-					chart[i,i+1][key] = chart_item(s[i], float(value), 0, True)
+				chart[i,i+1][key] = chart_item(s[i], float(value), 0, True)
 		else:
 			most_probable = handle_unknown_words(s[i])
 			chart[i,i+1][most_probable] = chart_item(s[i], float(1.0), 0, True)
-		check_unaries(chart[i,i+1])
+		check_unaries_d(chart[i,i+1],s[i])
 
 	n = len(s)+1
 	for span in range(2,n):

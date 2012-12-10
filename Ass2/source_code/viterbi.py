@@ -22,24 +22,24 @@ def build_tree(words):
 		tree_bank += ")"
 	else:
 		if len(nodes) == 1:
-			tree_bank += "(TOP)"
+			tree_bank += "(TOP"
+			for item in words:
+				tree_bank += " (POS " + item + ")"
+			tree_bank += ")"
 		else:	
 			while i != len(nodes):
-				if nodes[i].lvl < level:
-						for w in range(level-nodes[i].lvl):
-							tree_bank += ")"
-							level -= 1
-				if nodes[i+1].terminal == True:
-					tree_bank += " (" + str(nodes[i].node) + " " + str(nodes[i+1].node) + ")"
-					level = nodes[i].lvl
+				if nodes[i].lvl >= level:
+					if nodes[i].terminal:
+						tree_bank += " " + nodes[i].node + ")"
+					else:
+						tree_bank += "(" + nodes[i].node
+						level = nodes[i].lvl
 					i +=1
 				else:
-					tree_bank += " (" + str(nodes[i].node) + " "
-					level = nodes[i].lvl
-				i += 1
-			for i in range(level):
-				tree_bank += ")"
-	
+					tree_bank += ")"
+					level -= 1
+	for r in range(level):
+		tree_bank += ")"
 	write_treebank(tree_bank, "out1")
 	del nodes[:]
 
@@ -59,7 +59,7 @@ def run(chart,x,y,node,words,lvl):
 		max_prob = chart[x,y][node].prob
 		max_node = chart[x,y][node].child
 		max_item = chart[x,y][node]
-		if max_node == node or max_node in words:
+		if (x+1) == y and max_node == node or max_node in words:
 			nodes.append(tree_node(max_node,lvl+1,True))
 			return
 		if max_item.unary:
