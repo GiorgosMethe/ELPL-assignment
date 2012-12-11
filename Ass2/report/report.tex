@@ -24,6 +24,7 @@
 \usepackage{epstopdf}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{pdfpages}
 \usetikzlibrary{positioning}
 
 \hypersetup{
@@ -562,12 +563,38 @@ Test sentences include sentences of different lengths (number of words). We have
 \end{verbatim}
 
 \subsection{Results}
-For evaluating our trees against the gold test trees, the correct ones, we used EvalC software which is written in \textit{Java}, by Federico Sangati. We evaluate our trees against the ones from the gold tree set. Table~\re
+For evaluating our trees against the gold test trees, the correct ones, we used EvalC software which is written in \textit{Java}, by Federico Sangati. We evaluate our trees against the ones from the gold tree set. Table~\ref{metric}, presents our results, in three evaluation metrics. Bracketing recall, precision, and FMeasure. The total number of sentences that are included in these metrics are $603$. Additionally, in Figure~\ref{last}, illustrates the comparison between a resulted tree and the gold tree for the same sentence.
+
+\begin{table}[t!]
+\caption{Evaluation results of the most probable trees against the gold trees, using EvalC software with evalC parameter file, and cutoff length $15$.}
+\label{metric}
+\begin{center}
+    \begin{tabular}{l r}
+    \hline
+    \hline
+    \textbf{Metric} & \textbf{Score}  \\ \hline
+	\emph{Bracketing Recall}        &  73.71 \\
+	\emph{Bracketing Precision}     &  74.60 \\
+	\emph{Bracketing FMeasure}      &  74.15 \\
+  \hline
+  \end{tabular}
+  \end{center}
+\end{table}
+
 
 \section{Conclusion}
 \label{concl}
-In this report we have presented a simple but efficient way to extract the PCFG from a
-treebank data file. Our implementation makes use of the \textit{Python} dictionaries in order to store the rules of the grammar efficiently in order to be used in the most optimized way by the CYK algorithm which generates a parse forest for a sentence based on an existing grammar.
- Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data. More information about the code itself, you can find in the \texttt{readme} file attached with our source code.
+In this report we have presented a simple but efficient way to extract the PCFG from a treebank data file. Our implementation makes use of the \textit{Python} dictionaries in order to store the rules of the grammar efficiently in order to be used in the most optimized way by the CYK algorithm which generates a parse forest for a sentence based on an existing grammar.
+ Additionally, we have discussed how we implemented the CYK algorithm and how we handled the unknown words which are existed in the test sentences data. 
+ Finally, we parsed the output chart with the Viterbi algorithm to produce our most-probable trees for each sentence, and evaluate them against the gold trees.
+ More information about the code itself, you can find in the \texttt{readme} file attached with our source code.
+ 
+  
+\begin{figure}[t!]
+  \caption{Comparison between a gold tree and the output of our program for sentence number $42$.}
+  \label{last}
+  \centering
+    \includegraphics[page=42, width = 0.7\textwidth]{figures/param.pdf}
+\end{figure}
 
 \end{document}
