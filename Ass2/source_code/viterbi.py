@@ -11,7 +11,7 @@ class tree_node():
         self.lvl = lvl
         self.terminal = terminal
 
-def build_tree(words):
+def build_tree(words,outfile):
 	tree_bank = ""
 	level = -1
 	i = 0
@@ -40,7 +40,7 @@ def build_tree(words):
 					level -= 1
 	for r in range(level):
 		tree_bank += ")"
-	write_treebank(tree_bank, "out1")
+	write_treebank(tree_bank, outfile)
 	del nodes[:]
 
 

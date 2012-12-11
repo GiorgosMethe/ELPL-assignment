@@ -13,28 +13,29 @@ Executable: run.py
 To print the instructions for using this executable run:
 $ python run.py --help.
 
-usage: run.py [-h] [-e TREEBANK TREEBANK] [-s S_GRAMMAR_FILE]
-              [-a A_GRAMMAR_FILE] [-m M_GRAMMAR_FILE M_GRAMMAR_FILE]
-              [-ps PS_GRAMMAR_FILE PS_GRAMMAR_FILE]
-              [-pf PF_GRAMMAR_FILE PF_GRAMMAR_FILE]
-              [-pfw PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE]
+usage: run.py [-h] [-e TREEBANK TREEBANK] [-s S_FILE] [-a A_FILE]
+              [-m M_FILE M_FILE] [-ps PS_FILE PS_FILE] [-pf PF_FILE PF_FILE]
+              [-pfw PFW_FILE PFW_FILE PFW_FILE] [-v V_FILE V_FILE V_FILE]
 
 optional arguments:
   -h, --help            show this help message and exit
   -e TREEBANK TREEBANK, --treebank TREEBANK TREEBANK
                         Generate a grammar from the passed treebank
-  -s S_GRAMMAR_FILE, --s_grammar_file S_GRAMMAR_FILE
+  -s S_FILE, --s_file S_FILE
                         Show grammar
-  -a A_GRAMMAR_FILE, --a_grammar_file A_GRAMMAR_FILE
+  -a A_FILE, --a_file A_FILE
                         Ambiguous words
-  -m M_GRAMMAR_FILE M_GRAMMAR_FILE, --m_grammar_file M_GRAMMAR_FILE M_GRAMMAR_FILE
+  -m M_FILE M_FILE, --m_file M_FILE M_FILE
                         Most likely productions
-  -ps PS_GRAMMAR_FILE PS_GRAMMAR_FILE, --ps_grammar_file PS_GRAMMAR_FILE PS_GRAMMAR_FILE
+  -ps PS_FILE PS_FILE, --ps_file PS_FILE PS_FILE
                         CYK parser, takes a sentence as argument
-  -pf PF_GRAMMAR_FILE PF_GRAMMAR_FILE, --pf_grammar_file PF_GRAMMAR_FILE PF_GRAMMAR_FILE
+  -pf PF_FILE PF_FILE, --pf_file PF_FILE PF_FILE
                         CYK parser, takes a file of sentences and prints the
                         top productions
-  -pfw PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE, --pfw_grammar_file PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE PFW_GRAMMAR_FILE
+  -pfw PFW_FILE PFW_FILE PFW_FILE, --pfw_file PFW_FILE PFW_FILE PFW_FILE
+                        CYK parser, takes a file of sentences and write a file
+                        of top productions
+  -v V_FILE V_FILE V_FILE, --v_file V_FILE V_FILE V_FILE
                         CYK parser, takes a file of sentences and write a file
                         of top productions
 
@@ -74,8 +75,11 @@ write top production in an output file with the command:
 $ python run.py -pfw <pcfg_file_name> <sentences_file> <output_file>
 example: $ python run.py -pfw grammar testSentences top_productions
 =====================================================
-
-
+CYK parser parse sentences to find most probable parse tree
+then viterbi builds this tree and writes it into a output file:
+$ python run.py -v <pcfg_file_name> <sentences_file> <output_file>
+example: $ python run.py -v grammar testSentences trees
+=====================================================
 
 
 
@@ -125,7 +129,7 @@ to the fact that some rules are located into the same parenthesis.
 
 Module: cky.py
 =====================================================
-This module is responisble for parsing a sentence with
+This module is responsible for parsing a sentence with
 the cyk parser algorithm
 
 example output top productions:
@@ -158,8 +162,12 @@ iterate_sentences():
 iterates over all saved sentences and runs the cky parser
 for each one of them
 
+iterate_sentences_viterbi():
+iterates over all saved sentences and runs the cky parser
+for each one of them and then viterbi
+
 check_unaries(chart):
-iterates over all nodes inot the specified chart position
+iterates over all nodes into the specified chart position
 and looks for unaries
 Output: adds the unary rules to the specified chart position
 
@@ -167,6 +175,38 @@ cky_parsing(s):
 cky parser from stanford slides
 Output: the complete parse-forest
 
+check_unaries_most(chart):
+iterates over all nodes into the specified chart position
+and looks for unaries for the most probable tree
+Output: adds the unary rules to the specified chart position
+
+check_unaries_most_d(chart):
+iterates over all nodes into the specified chart position
+and looks for unaries for the most probable tree on the diagonal
+positions.
+Output: adds the unary rules to the specified chart position
+
+cky_parsing_most(s):
+cky parser from stanford slides for the most probable tree
+Output: the complete parse-forest
+
 print_top_productions(chart,n):
 prints the top production in the upper right 
 corner of the chart table
+
+Module: viterbi.py
+=====================================================
+This module is responsible for parsing the cyk output chart
+and build the most probable tree.
+
+functions:
+=====================================================
+build_tree(words,outfile): build the tree taking as input
+a list of nodes with their levels
+
+run(chart,x,y,node,words,lvl):
+run the viterbi algorithm, creates a list of nodes
+with a label their weights
+
+write_treebank(treebank,file_name):
+write output file for each sentence

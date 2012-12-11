@@ -130,10 +130,21 @@ def iterate_sentences():
 	i = 1
 	for s in sentences:
 		print "Sentence in line ", i, " has these top productions: "
+		chart = cky_parsing(s)
+		print_top_productions(chart,len(s)+1)
+		i += 1
+
+def iterate_sentences_viterbi(outfile):
+	"""iterates over all saved sentences and runs the cky parser
+	for each one of them
+    """
+	i = 1
+	for s in sentences:
+		print "Sentence in line ", i
 		if len(s) <= 15:
-			chart = cky_parsing(s)
+			chart = cky_parsing_most(s)
 		 	viterbi.run(chart,0,len(s),start_node,s,0)
-		viterbi.build_tree(s)
+		viterbi.build_tree(s,outfile)
 		i += 1
 
 def iterate_sentences_write(file_name):
@@ -143,13 +154,13 @@ def iterate_sentences_write(file_name):
 	i = 1
 	print "Writing output...",file_name
 	for s in sentences:
-		print i
+		print "Sentence in line ", i
 		chart = cky_parsing(s)
 		write_top_productions(chart,len(s)+1,file_name,i)
 		i += 1
 	print "completed successfully"
 
-def check_unaries(chart):
+def check_unaries_most(chart):
 	"""iterates over all nodes inot the specified chart position
 	and looks for unaries
 	Output: adds the unary rules to the specified chart position
@@ -169,7 +180,7 @@ def check_unaries(chart):
 						chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
 						added = True
 
-def check_unaries_d(chart,word):
+def check_unaries_most_d(chart,word):
 	"""iterates over all nodes inot the specified chart position
 	and looks for unaries
 	Output: adds the unary rules to the specified chart position
@@ -190,7 +201,7 @@ def check_unaries_d(chart,word):
 						chart[key1] = chart_item(key, (value.prob * float(value1)), 0, True)
 						added = True
 
-def cky_parsing(s):
+def cky_parsing_most(s):
 	"""cky parser from stanford slides
 	Output: the complete parse-forest
     """
@@ -203,7 +214,7 @@ def cky_parsing(s):
 		else:
 			most_probable = handle_unknown_words(s[i])
 			chart[i,i+1][most_probable] = chart_item(s[i], float(1.0), 0, True)
-		check_unaries_d(chart[i,i+1],s[i])
+		check_unaries_most_d(chart[i,i+1],s[i])
 
 	n = len(s)+1
 	for span in range(2,n):
@@ -221,6 +232,69 @@ def cky_parsing(s):
 										chart[begin,end][key] = chart_item((x,y), probability, split, False)
 								else:
 									chart[begin,end][key] = chart_item((x,y), probability, split, False)
+				check_unaries_most(chart[begin,end])
+	return chart
+
+def check_unaries(chart):
+	"""iterates over all nodes inot the specified chart position
+	and looks for unaries
+	Output: adds the unary rules to the specified chart position
+    """
+	added = True
+	while added == True:
+		added = False
+		tempChart = chart.copy()
+		for key, value in tempChart.iteritems():
+			if key in rulesRL:
+				for key1,value1 in rulesRL[key].iteritems():
+					if key1 == start_node:
+						if type(chart[key1]) != type({}):
+							chart[key1] = {}
+							chart[key1][key] = chart_item(value, value, 0, True)
+							added = True
+						else:
+							if not key in chart[key1]:
+								chart[key1][key] = chart_item(value, value, 0, True)
+								added = True
+
+def cky_parsing(s):
+	"""cky parser from stanford slides
+	Output: the complete parse-forest
+    """
+	chart = {}
+	for i in range(len(s)):
+		chart[i,i+1] = defaultdict(set)
+		if s[i] in rulesRL:
+			for key, value in rulesRL[s[i]].iteritems():
+				if type(chart[i,i+1][key]) != type({}):
+					chart[i,i+1][key] = {}
+					chart[i,i+1][key][s[i]] = chart_item(value, value, 0, False)
+				else:
+					if not s[i] in chart[i,i+1][key]:
+						chart[i,i+1][key][s[i]] = chart_item(value, value, 0, False)
+		else:
+			most_probable = handle_unknown_words(s[i])
+			chart[i,i+1][most_probable] = {}
+			chart[i,i+1][most_probable][s[i]] = chart_item(value, 1.0, 0, False)
+
+		check_unaries(chart[i,i+1])
+
+	n = len(s)+1
+	for span in range(2,n):
+		for begin in range(n-span):
+			end = begin + span
+			chart[begin,end] = defaultdict(set)
+			for split in range(begin+1,end):
+				for x in chart[begin,split]:
+					for y in chart[split,end]:
+						if (x,y) in rulesRL:
+							for key, value in rulesRL[(x,y)].iteritems():
+								if type(chart[begin,end][key]) != type({}):
+									chart[begin,end][key] = {}
+									chart[begin,end][key][(x,y)] = chart_item(value, value, split, False)
+								else:
+									if not s[i] in chart[begin,end][key]:
+										chart[begin,end][key][(x,y)] = chart_item(value,value, split, False)
 				check_unaries(chart[begin,end])
 	return chart
 
@@ -239,5 +313,6 @@ def write_top_productions(chart,n,file_name,line):
 	f.write("Sentence in line "+str(line)+" has these top productions:\n")
 	for key,value in chart[0,n-1].iteritems():
 		if key == start_node:
-			f.write(key+"->"+value.child+"\n")
+			for key1,value1 in chart[0,n-1][key].iteritems():
+				f.write(key+"->"+key1+"\n")
 	f.close()
