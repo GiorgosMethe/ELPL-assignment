@@ -49,7 +49,7 @@
 
 \newcommand{\mywebheader}{
   \begin{tabular}{@{}p{5in}p{4in}}
-  {\resheading{Project 1: Statistical Parsing, Steps 1 \& 2}} & {\Large 25 November, 2012}\\\vspace{0.2cm}
+  {\resheading{Project 1: Statistical Parsing}} & {\Large 25 November, 2012}\\\vspace{0.2cm}
   \end{tabular}}
 
 \begin{document}
@@ -73,7 +73,11 @@
 
 
 \section{Introduction}
-In this project we implemented a prototype statistical parser. Having the given treebank data file we parsed and extracted the rules using this statistical parser (Step 1), resulting to a probabilistic context free grammar (PCFg). Then, given this extracted grammar, we implemented the Cocke-Younger-Kasami (CYK) algorithm, in order to parse some test sentences generating a parse-forest for each one of them. In Section~\ref{parser}, we are going to describe the implementation of our parser. In Section~\ref{cyk}, we are going to discuss about our implementation of the CYK algorithm as well as, our assumptions in respect to the unknown words, the unary rules, and a brief explanation of every step of this algorithm through pseudo-code and examples. Finally, section~\ref{concl}, serves as an epilogue to the first two steps of this project.
+In this project we implemented a prototype statistical parser. Having the given treebank data file we parsed and extracted the rules using this statistical parser (Step 1), resulting to a probabilistic context free grammar (PCFg). Then, given this extracted grammar, we implemented the Cocke-Younger-Kasami (CYK) algorithm, in order to parse some test sentences generating a parse-forest for each one of them. In Section~\ref{parser}, we are going to describe the implementation of our parser. In Section~\ref{cyk}, we are going to discuss about our implementation of the CYK algorithm as well as, our assumptions in respect to the unknown words, the unary rules, and a brief explanation of every step of this algorithm through pseudo-code and examples. 
+Section~\ref{viterbi},
+
+
+Finally, section~\ref{concl}, serves as an epilogue to the first two steps of this project.
 
 
 
@@ -284,8 +288,8 @@ In computer science, the Cocke-Younger-Kasami (CYK) algorithm, is a parsing algo
 \STATE $end = begin + span$
 \FOR{{\bf split} $\in$ (begin,end)}
 \FOR{{\bf nodeL} $\in$ $chart[begin][split]$}
-\FOR{{\bf nodeR} $\in$ $chart[split][end]$}
-\FOR{{\bf node} $\in$ $RulesRL[nodeL,nodeR]$ \textbf{and} \textbf{node} $\notin$ $Chart[begin][end]$}
+\FOR{{\bf R} $\in$ $chart[split][end]$}
+\FOR{{\bf node} $\in$ $RulesRL[nodeL,R]$ \textbf{and} \textbf{node} $\notin$ $Chart[begin][end]$}
 \STATE{$Chart[begin][end].\textbf{add}(node)$}
 \ENDFOR
 \ENDFOR
@@ -376,6 +380,202 @@ The productions \texttt{TOP $\rightarrow$ X P} that cover the whole sentence in 
 \end{align*}
 
 \end{scriptsize}
+
+\section{Viterbi}
+\label{viterbi}
+In this section, we are going to present our Viterbi implementation which we built in order to produce the most probable tree for each input sentence. We have already, a Probabilistic context-free grammar extracted for the training sentences (Step 1), and a CYK implementation which gives us a parse-forest for each sentence in the test sentences data (Step 2). From this parse-forest we can build all possibles trees for each sentence.
+
+
+
+
+\begin{algorithm}[t!]
+\caption{CYK Algorithm for Most-probable Production}
+\label{CYKmost}
+\begin{scriptsize}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$RulesRL[]$, $Sentence\ S[]$
+\STATE {\#$RulesRL$}, is a dictionary in which for every production $p$, gives $RulesRL[p]$ non-terminal nodes which have this production.
+\STATE {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$
+\STATE
+\STATE {\# Chart initialization}
+\FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
+\IF{$S[i]$ $\notin$ $RulesRL[]$}
+\STATE{$\textbf{handle\_unknown\_word}(S[i])$}
+\ELSE
+\FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
+\IF{$node$ $\notin$ $Chart[i][i+1]$}
+\STATE{$Chart[i][i+1][node] = (S[i],p(node \rightarrow S[i]))$}
+\ELSE
+\IF{$p(node \rightarrow S[i])$ $>$ $Chart[i][i+1][node].prob$}
+\STATE{$Chart[i][i+1][node] = (S[i],p(node \rightarrow S[i]))$}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDIF
+\STATE{$\textbf{check\_unaries}(Chart[i][i+1])$}
+\ENDFOR
+\STATE
+\STATE {\# Fill productions in chart}
+\STATE $n = \textbf{length}(S) + 1$
+\FOR{{\bf span} $\in$ (2,n)}
+\FOR{{\bf b} $\in$ (0,n-span)}
+\STATE $e = b + span$
+\FOR{{\bf s} $\in$ (b,e)}
+\FOR{{\bf L} $\in$ $chart[b][s]$}
+\FOR{{\bf R} $\in$ $chart[s][e]$}
+\FOR{{\bf node} $\in$ $RulesRL[L,R]$}
+\IF{$node$ $\notin$ $Chart[b][e]$}
+\STATE{$Chart[b][e][node] = (L,R,p(node \rightarrow L,R) \times Chart[b][s][L].prob \times Chart[s][e][R].prob,s)$}
+\ELSE
+\IF{$p(node \rightarrow L,R)  \times Chart[b][s][L].prob \times Chart[s][e][R].prob$ $>$ $Chart[i][i+1][node].prob$}
+\STATE{$Chart[b][e][node] = (L,R,p(node \rightarrow L,R) \times Chart[b][s][L].prob \times Chart[s][e][R].prob,s)$}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\STATE{$\textbf{check\_unaries}(Chart[b][end])$}
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{scriptsize}
+\end{algorithm}
+
+\begin{algorithm}[t!]
+\caption{Unaries Handling for Most-probable Production}
+\label{unariesMOst}
+\begin{scriptsize}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$Chart[i][j]$
+\STATE {\bf Output: }Updated $Chart[i][j]$
+\STATE{$added = true$}
+\WHILE{$added$}
+\STATE{$added = false$}
+\FOR{{\bf ref\_node} $\in$ $chart[i][j]$}
+\FOR{{\bf node} $\in$ $RulesRL[ref\_node]$}
+\IF{$node$ $\notin$ $Chart[i][j]$}
+\STATE{$Chart[i][j][node] = (node,p(node \rightarrow ref\_node)\times Chart[i][j][ref\_node].prob)$}
+\STATE{$added = true$}
+\ELSE
+\IF{$p(node \rightarrow ref\_node) \times Chart[i][j][ref\_node].prob$ $>$ $Chart[i][j][node].prob$}
+\STATE{$Chart[i][j][node] = (node,p(node \rightarrow ref\_node) \times Chart[i][j][ref\_node].prob)$}
+\STATE{$added = true$}
+\ENDIF
+\ENDIF
+\ENDFOR
+\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{scriptsize}
+\end{algorithm}
+
+
+
+
+\subsection{Most-probable Parse Tree}
+In order to implement an efficient Viterbi algorithm, we had to reconstruct the CYK algorithm in order to fill its chart with the most probable parse-tree. To do that, we keep in each position of the chart the most-probable production for each left hand side node that appears in the each position. So, each position of the chart is now holding different left hand nodes, each one of them leads us to the most probable production, not to all possible productions. Algorithm~\ref{CYKmost}, presents the pseudo-code for the alternative implementation of the CYK-algorithm. Additionally, in the same manner, we changed the way that handle unary productions in each chart position. This is illustrated in the Algorithm~\ref{unariesMOst}. This different approach will help us save computational cost during Viterbi algorithm. Imagine, that, if we had kept the old approach, we should have iterate over all possible productions in each non-terminal node to find the most probable one, every time.
+
+\subsection{Viterbi Algorithm Implementation}
+
+
+\begin{algorithm}[t!]
+\caption{Viterbi}
+\label{viterbi}
+\begin{small}
+\begin{algorithmic}[1]
+\STATE {\bf Input: }$chart[][],x,y,node,words,level$
+\STATE {\bf Initial values: }$chart[][],0,length(words)-1,TOP,words,-1$
+\STATE {\bf Output: } $nodes[]$
+\IF{$"@" \in node$}
+\STATE{$level -= 1$}
+\ELSE
+\IF{$"\%\%\%\%" \in node$}
+\STATE{$temp = node.split(unary_node)$}
+\STATE{$	nodes.append(temp[0],level,False)$}
+\STATE{$	nodes.append(temp[1],level+1,False)$}
+\STATE{$	level += 1$}
+\ELSE
+\STATE{$nodes.append(tree_node(node,level,False))$}
+\ENDIF
+\ENDIF
+\IF{$node \in chart[x][y]$}
+\STATE{$	n = chart[x,y][node]$}
+\IF{$ (x+1) == y \cup n.child == node \cap n.child \in words$}
+\STATE{$nodes.append(n,level+1,True)$}
+\ENDIF
+\IF{$n\ is\ unary$}
+\STATE{$Viterbi(chart,x,y,n,words,lvl+1)$}
+\RETURN
+\ELSE
+\STATE{$Viterbi(chart,x,n.split,n[l],words,level+1)$}
+\STATE{$Viterbi(chart,n.split,y,n[r],words,level+1)$}
+\RETURN
+\ENDIF
+\ELSE
+\RETURN
+\ENDIF
+\end{algorithmic}
+\end{small}
+\end{algorithm}
+
+
+
+
+\begin{table}[h!]
+\begin{small}
+\begin{center}
+\begin{tabular}{ r r r }
+\texttt{TOP} 0  &  \texttt{PRP} 4    &    \texttt{n't} 5\\  
+\texttt{S} 1    &  \texttt{it} 5     &     \texttt{NP} 3\\
+\texttt{NP} 2   &  \texttt{VP} 2     &     \texttt{NNP} 4\\       
+\texttt{DT} 3   &  \texttt{VBD} 3    &      \texttt{Black} 5\\
+\texttt{No} 4   &   \texttt{S@} 2    &     \texttt{NNP} 4\\
+\texttt{,} 3    &   \texttt{was} 4  &   \texttt{Monday} 5\\   
+\texttt{,} 4    &  \texttt{ADVP} 3 &   \texttt{.} 2\\  
+\texttt{NP} 3  &		\texttt{RB} 4& \texttt{.} 3\\
+\end{tabular}
+\end{center}
+\end{small}
+\end{table}
+
+
+\begin{verbatim}
+( TOP (S (NP (DT No)(, ,)(NP (PRP it)))(VP (VBD was)(ADVP (RB n't))(NP (NNP Black)
+(NNP Monday)))(. .)))
+\end{verbatim}
+
+
+\begin{algorithm}[t!]
+\caption{Build Tree}
+\label{build}
+\begin{scriptsize}
+\begin{algorithmic}[1]
+\STATE {\bf Input: } $nodes$
+\STATE {\bf Output: } $tree$
+\STATE{$level = -1$}
+\WHILE{$i < length(nodes)$}
+\IF{$nodes[i].level \geq level$}
+\IF{$nodes[i].terminal:$}
+\STATE{$tree\ += nodes[i].node + ")"$}
+\ELSE
+\STATE{$tree\ += "(" + nodes[i].node$}
+\STATE{$i +=1$}
+\ENDIF
+\STATE{$level = nodes[i].level$}
+\ELSE
+\STATE{$tree\ += ")"$}
+\STATE{$level\ -= 1$}
+\ENDIF
+\ENDWHILE
+\FOR{$i = 1\ to\ level$}
+\STATE{$tree\ += ")"$}
+\ENDFOR
+\end{algorithmic}
+\end{scriptsize}
+\end{algorithm}
+
+
 
 \section{Conclusion}
 \label{concl}

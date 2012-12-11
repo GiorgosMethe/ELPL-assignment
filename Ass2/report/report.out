@@ -10,4 +10,7 @@
 \BOOKMARK [2][-]{subsection.3.2}{Unknown Words}{section.3}% 10
 \BOOKMARK [2][-]{subsection.3.3}{Results}{section.3}% 11
 \BOOKMARK [3][-]{subsubsection.3.3.1}{TOP Productions}{subsection.3.3}% 12
-\BOOKMARK [1][-]{section.4}{Conclusion}{}% 13
+\BOOKMARK [1][-]{section.4}{Viterbi}{}% 13
+\BOOKMARK [2][-]{subsection.4.1}{Most-probable Parse Tree}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.2}{Viterbi Algorithm Implementation}{section.4}% 15
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 16
