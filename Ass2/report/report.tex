@@ -398,10 +398,7 @@ In this section, we are going to present our Viterbi implementation which we bui
 \STATE {\bf Output: }$Chart[\textbf{length}(S)+1][\textbf{length}(S)+1]$
 \STATE
 \STATE {\# Chart initialization}
-\FOR{{\bf i} $\in$ (0,\textbf{length}(s))}
-\IF{$S[i]$ $\notin$ $RulesRL[]$}
-\STATE{$\textbf{handle\_unknown\_word}(S[i])$}
-\ELSE
+\STATE {\ldots}
 \FOR{{\bf node} $\in$ $RulesRL[S[i]]$}
 \IF{$node$ $\notin$ $Chart[i][i+1]$}
 \STATE{$Chart[i][i+1][node] = (S[i],p(node \rightarrow S[i]))$}
@@ -411,18 +408,10 @@ In this section, we are going to present our Viterbi implementation which we bui
 \ENDIF
 \ENDIF
 \ENDFOR
-\ENDIF
-\STATE{$\textbf{check\_unaries}(Chart[i][i+1])$}
-\ENDFOR
+\STATE {\ldots}
 \STATE
 \STATE {\# Fill productions in chart}
-\STATE $n = \textbf{length}(S) + 1$
-\FOR{{\bf span} $\in$ (2,n)}
-\FOR{{\bf b} $\in$ (0,n-span)}
-\STATE $e = b + span$
-\FOR{{\bf s} $\in$ (b,e)}
-\FOR{{\bf L} $\in$ $chart[b][s]$}
-\FOR{{\bf R} $\in$ $chart[s][e]$}
+\STATE {\ldots}
 \FOR{{\bf node} $\in$ $RulesRL[L,R]$}
 \IF{$node$ $\notin$ $Chart[b][e]$}
 \STATE{$Chart[b][e][node] = (L,R,p(node \rightarrow L,R) \times Chart[b][s][L].prob \times Chart[s][e][R].prob,s)$}
@@ -432,12 +421,7 @@ In this section, we are going to present our Viterbi implementation which we bui
 \ENDIF
 \ENDIF
 \ENDFOR
-\ENDFOR
-\ENDFOR
-\ENDFOR
-\STATE{$\textbf{check\_unaries}(Chart[b][end])$}
-\ENDFOR
-\ENDFOR
+\STATE {\ldots}
 \end{algorithmic}
 \end{scriptsize}
 \end{algorithm}
@@ -447,12 +431,7 @@ In this section, we are going to present our Viterbi implementation which we bui
 \label{unariesMOst}
 \begin{scriptsize}
 \begin{algorithmic}[1]
-\STATE {\bf Input: }$Chart[i][j]$
-\STATE {\bf Output: }Updated $Chart[i][j]$
-\STATE{$added = true$}
-\WHILE{$added$}
-\STATE{$added = false$}
-\FOR{{\bf ref\_node} $\in$ $chart[i][j]$}
+\STATE {\ldots}
 \FOR{{\bf node} $\in$ $RulesRL[ref\_node]$}
 \IF{$node$ $\notin$ $Chart[i][j]$}
 \STATE{$Chart[i][j][node] = (node,p(node \rightarrow ref\_node)\times Chart[i][j][ref\_node].prob)$}
@@ -464,8 +443,7 @@ In this section, we are going to present our Viterbi implementation which we bui
 \ENDIF
 \ENDIF
 \ENDFOR
-\ENDFOR
-\ENDWHILE
+\STATE {\ldots}
 \end{algorithmic}
 \end{scriptsize}
 \end{algorithm}
@@ -474,9 +452,7 @@ In this section, we are going to present our Viterbi implementation which we bui
 
 
 \subsection{Most-probable Parse Tree}
-In order to implement an efficient Viterbi algorithm, we had to reconstruct the CYK algorithm in order to fill its chart with the most probable parse-tree. To do that, we keep in each position of the chart the most-probable production for each left hand side node that appears in the each position. So, each position of the chart is now holding different left hand nodes, each one of them leads us to the most probable production, not to all possible productions. Algorithm~\ref{CYKmost}, presents the pseudo-code for the alternative implementation of the CYK-algorithm. Additionally, in the same manner, we changed the way that handle unary productions in each chart position. This is illustrated in the Algorithm~\ref{unariesMOst}. This different approach will help us save computational cost during Viterbi algorithm. Imagine, that, if we had kept the old approach, we should have iterate over all possible productions in each non-terminal node to find the most probable one, every time.
-
-\subsection{Viterbi Algorithm Implementation}
+In order to implement an efficient Viterbi algorithm, we had to reconstruct the CYK algorithm in order to fill its chart with the most probable parse-tree. To do that, we keep in each position of the chart the most-probable production for each left hand side node that appears in the each position. So, each position of the chart is now holding different left hand nodes, each one of them leads us to the most probable production, not to all possible productions. Algorithm~\ref{CYKmost}, presents only the changes in the pseudo-code for the alternative implementation of the CYK-algorithm. Additionally, in the same manner, we changed the way that handle unary productions in each chart position. This is illustrated in the Algorithm~\ref{unariesMOst}. From all productions that can be produced by a left hand side node, we keep only the most probable. This different approach will help us save computational cost during Viterbi algorithm. Imagine, that, if we had kept the old approach, we should have iterate over all possible productions in each non-terminal node to find the most probable one, every time.
 
 
 \begin{algorithm}[t!]
@@ -519,30 +495,31 @@ In order to implement an efficient Viterbi algorithm, we had to reconstruct the 
 \end{small}
 \end{algorithm}
 
-
-
-
+\subsection{Viterbi Algorithm Implementation}
+Viterbi algorithm builds the most probable tree which produced a specific sentence in a recursive way. We always start from the upper right corner of the chart with the \texttt{TOP} node. Next, we follow the child node(s) of the \texttt{TOP} node and call the same algorithm for the child node(s). Algorithm~\ref{viterbi}, presents the pseudo-code of  the algorithm that we design and build for this purpose. The output of this algorithm is list of pre-order visited nodes a label which defines the level of each node. Additionally, we are taking care of the nodes labeled with \texttt{"\%\%\%\%"}, or \texttt{"@"}. For the first case, \texttt{"\%\%\%\%"}, we store the first node in the unary production with the predefined level (one more than its parent), and the second node with the same level plus one. In addition, child(ren) of this node will be called with one more level than the original. For the second case, \texttt{"@"}, we just do not store the node and we call its child(ren) with the original level subtracted by one. In this way, child(ren) nodes will end up being child(ren) of their grandparent, not of their father. We can visualize this list of nodes for the example sentence:
+\begin{center}
+\textit{``The collateral is being sold by a thrift institution . ''}  
+\end{center}
+as the following:
 \begin{table}[h!]
 \begin{small}
 \begin{center}
-\begin{tabular}{ r r r }
-\texttt{TOP} 0  &  \texttt{PRP} 4    &    \texttt{n't} 5\\  
-\texttt{S} 1    &  \texttt{it} 5     &     \texttt{NP} 3\\
-\texttt{NP} 2   &  \texttt{VP} 2     &     \texttt{NNP} 4\\       
-\texttt{DT} 3   &  \texttt{VBD} 3    &      \texttt{Black} 5\\
-\texttt{No} 4   &   \texttt{S@} 2    &     \texttt{NNP} 4\\
-\texttt{,} 3    &   \texttt{was} 4  &   \texttt{Monday} 5\\   
-\texttt{,} 4    &  \texttt{ADVP} 3 &   \texttt{.} 2\\  
-\texttt{NP} 3  &		\texttt{RB} 4& \texttt{.} 3\\
+\begin{tabular}{ r r r r}
+\texttt{TOP} 0 & \texttt{VP} 2& \texttt{VBN} 5& \texttt{a} 8 \\
+\texttt{S} 1 & \texttt{VBZ} 3& \texttt{sold} 6& \texttt{NN} 7 \\
+\texttt{NP} 2 & \texttt{is} 4& \texttt{PP} 5& \texttt{thrift} 8 \\
+\texttt{DT} 3 & \texttt{VP} 3& \texttt{IN} 6& \texttt{NN} 7 \\
+\texttt{The} 4& \texttt{VBG} 4& \texttt{by} 7& \texttt{institution} 8 \\
+\texttt{NN} 3& \texttt{being} 5& \texttt{NP} 6& \texttt{.} 2 \\
+\texttt{collateral} 4& \texttt{VP} 4& \texttt{DT} 7& \texttt{.} 3 \\
 \end{tabular}
 \end{center}
 \end{small}
 \end{table}
-
-
+,where each node has a label of its level. In this way, we can build the tree of the most probable derivation of the tree easily. Algorithm~\ref{build}, presents this procedure in pseudo-code. Having, linear complexity builds the tree in the same as Penn WSJ format. Although, that printing directly the tree from viterbi algorithm was feasible we preferred doing this simple algorithm in order for the two functions to be separate. The most probable tree production for the above sentence is given in Penn WSJ format:
 \begin{verbatim}
-( TOP (S (NP (DT No)(, ,)(NP (PRP it)))(VP (VBD was)(ADVP (RB n't))(NP (NNP Black)
-(NNP Monday)))(. .)))
+(TOP(S(NP(DT The)(NN collateral))(VP(VBZ is)(VP(VBG being)(VP(VBN sold)(PP(IN by)(NP
+(DT a)(NN thrift)(NN institution))))))(. .)))
 \end{verbatim}
 
 
@@ -575,7 +552,17 @@ In order to implement an efficient Viterbi algorithm, we had to reconstruct the 
 \end{scriptsize}
 \end{algorithm}
 
+\subsubsection{Unknown Words}
+As we seen before, in Section~\ref{CYK}, we came up with a simple approach of handling unknown words. We used the same approach here. A better approach would have been to train a function for assigning unknown words to left hand side nodes while training. This would have been a better and more probabilistic approach than the one we have now, and hopefully, would have given better results. 
 
+\subsubsection{Long Sentences}
+Test sentences include sentences of different lengths (number of words). We have been asked to evaluate only those with less or equal length to $15$. So, we filtered out the long sentences, instead we are writing an empty tree like the following:
+\begin{verbatim}
+(TOP (POS word_1) (POS word_2)....(POS word_n)) 
+\end{verbatim}
+
+\subsection{Results}
+For evaluating our trees against the gold test trees, the correct ones, we used EvalC software which is written in \textit{Java}, by Federico Sangati. We evaluate our trees against the ones from the gold tree set. Table~\re
 
 \section{Conclusion}
 \label{concl}
